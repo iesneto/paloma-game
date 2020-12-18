@@ -71,7 +71,7 @@ public class MainMenu : MonoBehaviour
     public void LoadLevel()
     {
         GameControl.Instance.StartPlaying();
-        GameControl.Instance.gameObject.GetComponent<SceneLoader>().LoadRandomLevel();
+        GameControl.Instance.gameObject.GetComponent<SceneController>().LoadRandomLevel();
     }
 
     public void ShowModalPurchase(Upgrade _upgrade)

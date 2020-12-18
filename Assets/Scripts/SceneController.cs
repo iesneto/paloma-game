@@ -5,18 +5,16 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-public class SceneLoader : MonoBehaviour
+public class SceneController : MonoBehaviour
 {
     
-    [SerializeField] private GameObject LoadingScreenBG;
-    [SerializeField] private Slider loadingBar;
     [SerializeField] private float fadeSpeed;
     [SerializeField] private Vector2Int numberOfScenes;
+    [SerializeField] private UIManager uiManager;
 
     private void Awake()
     {
-        LoadingScreenBG.SetActive(false);
-        //loadingBar.gameObject.SetActive(false);
+        uiManager = GetComponent<UIManager>();
     }
 
     public void LoadRandomLevel()
@@ -33,30 +31,29 @@ public class SceneLoader : MonoBehaviour
     IEnumerator LoadSceneAsync(int scene)
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(scene);
-        LoadingScreenBG.SetActive(true);
-        //loadingBar.gameObject.SetActive(true);
+        uiManager.SetLoadingScreen(true);
+        
 
         while (!operation.isDone)
         {
             //float progress = Mathf.Clamp01(operation.progress);
-            loadingBar.value = operation.progress;
-            
+            uiManager.SetLoadingBarValue(operation.progress);
             yield return null;
         }
-
-        loadingBar.value = 1;
+        uiManager.SetLoadingBarValue(1);
         StartCoroutine(FadeOutLoadingScreen());
         if (scene != 1) GameControl.Instance.ShowInGameUI();
-
-        //LoadingScreenBG.SetActive(false);
-        //loadingBar.gameObject.SetActive(false);
     }
 
     IEnumerator FadeOutLoadingScreen()
     {
         yield return new WaitForSeconds(fadeSpeed);
-        LoadingScreenBG.SetActive(false);
-        
-        //loadingBar.gameObject.SetActive(false);
+        uiManager.SetLoadingScreen(false);
+
+    }
+
+    public int ReturnSceneIndex()
+    {
+        return SceneManager.GetActiveScene().buildIndex;
     }
 }

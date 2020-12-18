@@ -12,7 +12,7 @@ public class GameControl : MonoBehaviour
     [SerializeField] private MainMenu MainMenuObj;
     
     [SerializeField] private FileManager fileManager;
-    [SerializeField] private SceneLoader sceneLoader;
+    [SerializeField] private SceneController sceneController;
 
     [SerializeField] private GameObject inGameUI;
     [SerializeField] private Text coinsValueShadow;
@@ -86,7 +86,7 @@ public class GameControl : MonoBehaviour
         fileManager = new FileManager();
         playerData = new ControlPlayerData(0);
         fileManager.Load();
-        sceneLoader = GetComponent<SceneLoader>();
+        sceneController = GetComponent<SceneController>();
         coinsValue.text = playerData.currentPoints.ToString();
         coinsValueShadow.text = coinsValue.text;
 
@@ -111,7 +111,7 @@ public class GameControl : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        sceneLoader.LoadMainMenu();
+        sceneController.LoadMainMenu();
         inGameUI.SetActive(false);
         
     }
