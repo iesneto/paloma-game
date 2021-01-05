@@ -12,8 +12,10 @@ public class UIManager : MonoBehaviour
     {
 
         // ##Ivo Put Here Any In-GameUI
+        [SerializeField]private Image cowFillBar;
+
     }
-    private InGameUI inGameUI;
+    [SerializeField]private InGameUI inGameUI;
 
     private void Awake()
     {
