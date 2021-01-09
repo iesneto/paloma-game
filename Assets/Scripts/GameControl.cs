@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+// Movendo a UI para o UIManager
+//using UnityEngine.UI;
 using System;
 
 public class GameControl : MonoBehaviour
@@ -13,10 +14,11 @@ public class GameControl : MonoBehaviour
     
     [SerializeField] private FileManager fileManager;
     [SerializeField] private SceneController sceneController;
+    [SerializeField] private UIManager uiManager;
 
-    [SerializeField] private GameObject inGameUI;
-    [SerializeField] private Text coinsValueShadow;
-    [SerializeField] private Text coinsValue;
+   // [SerializeField] private GameObject inGameUI;
+   // [SerializeField] private Text coinsValueShadow;
+   // [SerializeField] private Text coinsValue;
    
     
 
@@ -87,8 +89,7 @@ public class GameControl : MonoBehaviour
         playerData = new ControlPlayerData(0);
         fileManager.Load();
         sceneController = GetComponent<SceneController>();
-        coinsValue.text = playerData.currentPoints.ToString();
-        coinsValueShadow.text = coinsValue.text;
+        uiManager.ShowMenuUI(true);
 
         
     }
@@ -112,15 +113,13 @@ public class GameControl : MonoBehaviour
     public void LoadMainMenu()
     {
         sceneController.LoadMainMenu();
-        inGameUI.SetActive(false);
+        ShowInGameUI();
         
     }
 
     public void ShowInGameUI()
     {
-        inGameUI.SetActive(true);
-        coinsValue.text = playerData.currentPoints.ToString();
-        coinsValueShadow.text = coinsValue.text;
+        uiManager.ShowInGameUI(true);
     }
 
     public void AddCoins(CowBehavior cow)
@@ -144,8 +143,7 @@ public class GameControl : MonoBehaviour
             default:
                 break;
         }
-        coinsValue.text = playerData.currentPoints.ToString();
-        coinsValueShadow.text = coinsValue.text;
+        uiManager.SyncInGameUI();
         fileManager.Save();
     }
 
