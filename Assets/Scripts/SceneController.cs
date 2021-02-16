@@ -42,7 +42,7 @@ public class SceneController : MonoBehaviour
         }
         uiManager.SetLoadingBarValue(1);
         StartCoroutine(FadeOutLoadingScreen());
-        if (scene != 1) GameControl.Instance.ShowInGameUI();
+        if (scene != 1) GameControl.Instance.LevelLoaded();
     }
 
     IEnumerator FadeOutLoadingScreen()

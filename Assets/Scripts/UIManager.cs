@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour
     private struct MenuUI
     {
         public GameObject gameObject;
+        public MainMenu mainMenuScript;
         public Text coinsValueShadow;
         public Text coinsValue;
     }
@@ -35,6 +36,18 @@ public class UIManager : MonoBehaviour
         SetLoadingScreen(false);
     }
 
+    #region GENERAL_METHODS
+
+    public void LoadLevel()
+    {
+        GameControl.Instance.StartPlaying();
+        GameControl.Instance.gameObject.GetComponent<SceneController>().LoadRandomLevel();
+    }
+
+    #endregion
+
+    #region LOADING_SCREEN_METHODS
+
     public void SetLoadingScreen(bool s)
     {
         loadingScreenObject.SetActive(s);
@@ -44,16 +57,23 @@ public class UIManager : MonoBehaviour
     {
         loadingBar.value = v;
     }
+    #endregion
 
     #region IN_GAME_UI_METHODS
 
-    public void ShowInGameUI(bool flag)
+    public void InGameUIStart()
     {
-        inGameUI.gameObject.SetActive(flag);
-        if(flag) SyncInGameUI();
+        InGameUIShow(true);
+        MainMenuShowUI(false);
     }
 
-    public void SyncInGameUI()
+    public void InGameUIShow(bool flag)
+    {
+        inGameUI.gameObject.SetActive(flag);
+        if(flag) InGameUISync();
+    }
+
+    public void InGameUISync()
     {
         inGameUI.coinsValue.text = GameControl.Instance.playerData.currentPoints.ToString();
     }
@@ -62,15 +82,45 @@ public class UIManager : MonoBehaviour
 
     #region MENU_UI_METHODS
 
-    public void ShowMenuUI(bool flag)
+    public void MainMenuStart(bool _startedPlaying)
     {
-        menuUI.gameObject.SetActive(flag);
-        if (flag) SyncMenuUI();
+        MainMenuShowUI(true);
+        InGameUIShow(false);
+        if (_startedPlaying) menuUI.mainMenuScript.ShowPlayMenu();
+            else menuUI.mainMenuScript.ShowIntroMenu();
     }
 
-    public void SyncMenuUI()
+
+
+    public void MainMenuShowUI(bool flag)
+    {
+        menuUI.gameObject.SetActive(flag);
+        if (flag) MainMenuSyncUI();
+    }
+
+    public void MainMenuShowPlayMenu()
+    {
+        menuUI.mainMenuScript.ShowPlayMenu();
+    }
+
+    public void MainMenuSyncUI()
     {
         menuUI.coinsValue.text = GameControl.Instance.playerData.currentPoints.ToString();
+    }
+
+    public void MainMenuCloseModalWindow()
+    {
+        menuUI.mainMenuScript.CloseModal();
+    }
+
+    public void MainMenuShowModalPurchase(Upgrade up)
+    {
+        menuUI.mainMenuScript.ShowModalPurchase(up);
+    }
+
+    public void MainMenuCanPurchaseUpgrade()
+    {
+        menuUI.mainMenuScript.CanPurchaseUpgrade();
     }
 
     #endregion

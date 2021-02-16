@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
@@ -9,35 +10,37 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject IntroPanel;
     [SerializeField] private Button IntroPanel_OptionsButton;
     [SerializeField] private Button IntroPanel_PlayButton;
-    [SerializeField] private Text PlayMenuPanel_PlayerLevel;
+    [SerializeField] private TextMeshProUGUI PlayMenuPanel_PlayerLevel;
     [SerializeField] private GameObject[] PlayMenuPanel_Upgrades;
     [SerializeField] private GameObject[] PlayMenuPanel_CowCounter;
-    [SerializeField] private Text PlayMenuPanel_Coins;
+    [SerializeField] private TextMeshProUGUI PlayMenuPanel_Coins;
     [SerializeField] private Button PlayMenuPanel_PlayButton;
     [SerializeField] private GameObject modalConfirmPurchase;
     [SerializeField] private Image modalIcon;
-    [SerializeField] private Text modalTextValue;
-    [SerializeField] private Text modalTextValueShadow;
+    [SerializeField] private TextMeshProUGUI modalTextValue;
     [SerializeField] private Upgrade upgradeToPurchase;
 
 
-    private void Start()
-    {
-        GameControl.Instance.SetupMainMenu(this);
-    }
+    //private void StartMenuUI()
+    //{
+    //    //GameControl.Instance.SetupMainMenu(this);
+    //   //GameControl.Instance.gameObject.GetComponent<UIManager>().SetupMainMenu(this);
+    //}
 
    
     public void ShowIntroMenu()
     {
         IntroPanel.SetActive(true);
         PlayMenuPanel.SetActive(false);
+        CloseModal();
     }
 
     public void ShowPlayMenu()
     {
+        CloseModal();
         IntroPanel.SetActive(false);
         PlayMenuPanel.SetActive(true);
-        PlayMenuPanel_Coins.text = GameControl.Instance.playerData.currentPoints.ToString();
+        PlayMenuPanel_Coins.SetText(GameControl.Instance.playerData.currentPoints.ToString());
         foreach(GameObject obj in PlayMenuPanel_Upgrades)
         {
             obj.GetComponent<Upgrade>().SetupUpgrade();
@@ -68,19 +71,14 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    public void LoadLevel()
-    {
-        GameControl.Instance.StartPlaying();
-        GameControl.Instance.gameObject.GetComponent<SceneController>().LoadRandomLevel();
-    }
+   
 
     public void ShowModalPurchase(Upgrade _upgrade)
     {
         upgradeToPurchase = _upgrade;
         modalConfirmPurchase.SetActive(true);
         modalIcon.sprite = upgradeToPurchase.GetUpgradeIcon();
-        modalTextValue.text = upgradeToPurchase.GetUpgradeValue().ToString();
-        modalTextValueShadow.text = modalTextValue.text;
+        modalTextValue.SetText(upgradeToPurchase.GetUpgradeValue().ToString());
     }
 
     public void CanPurchaseUpgrade()

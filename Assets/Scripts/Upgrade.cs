@@ -18,7 +18,8 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Color maskColorOn;
     [SerializeField] private Color maskColorOff;
     [SerializeField] private Button upgradeButton;
-    [SerializeField] private MainMenu mainMenu;
+    //[SerializeField] private MainMenu mainMenu;
+    [SerializeField] private UIManager uiManager;
     [SerializeField] private GameObject maxLevelLabel;
 
     public void OnPointerClick(PointerEventData eventData)
@@ -85,7 +86,8 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
 
     public void ConfirmPurchaseWindow()
     {
-        mainMenu.ShowModalPurchase(this);
+        // mainMenu.ShowModalPurchase(this);
+        uiManager.MainMenuShowModalPurchase(this);
     }
 
     public void PurchaseUpgrade()

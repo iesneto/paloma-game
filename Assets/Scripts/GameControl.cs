@@ -10,7 +10,7 @@ public class GameControl : MonoBehaviour
     
     
     [SerializeField] private bool startedPlaying;
-    [SerializeField] private MainMenu MainMenuObj;
+   // [SerializeField] private MainMenu MainMenuObj;
     
     [SerializeField] private FileManager fileManager;
     [SerializeField] private SceneController sceneController;
@@ -89,7 +89,8 @@ public class GameControl : MonoBehaviour
         playerData = new ControlPlayerData(0);
         fileManager.Load();
         sceneController = GetComponent<SceneController>();
-        uiManager.ShowMenuUI(true);
+        uiManager = GetComponent<UIManager>();
+        uiManager.MainMenuStart(startedPlaying);
 
         
     }
@@ -102,24 +103,26 @@ public class GameControl : MonoBehaviour
         startedPlaying = true;
     }
 
-    public void SetupMainMenu(MainMenu m)
-    {
-        MainMenuObj = m;
-        if (startedPlaying) MainMenuObj.ShowPlayMenu();
-        else MainMenuObj.ShowIntroMenu();
-    }
+    //public void SetupMainMenu()
+    //{
+    //    MainMenuObj = m;
+    //    // AQUI, deve trocar para o UIManager controlar o MainMenu
+    //    if (startedPlaying) MainMenuObj.ShowPlayMenu();
+    //    else MainMenuObj.ShowIntroMenu();
+    //}
 
 
     public void LoadMainMenu()
     {
         sceneController.LoadMainMenu();
-        ShowInGameUI();
+        uiManager.MainMenuStart(startedPlaying);
+        //ShowInGameUI();
         
     }
 
-    public void ShowInGameUI()
+    public void LevelLoaded()
     {
-        uiManager.ShowInGameUI(true);
+        uiManager.InGameUIStart();
     }
 
     public void AddCoins(CowBehavior cow)
@@ -143,7 +146,7 @@ public class GameControl : MonoBehaviour
             default:
                 break;
         }
-        uiManager.SyncInGameUI();
+        uiManager.InGameUISync();
         fileManager.Save();
     }
 
@@ -174,7 +177,7 @@ public class GameControl : MonoBehaviour
         }
         playerData.currentPoints -= value;
         fileManager.Save();
-        MainMenuObj.ShowPlayMenu();
+        uiManager.MainMenuShowPlayMenu();
     }
 
     //public void MainMenuLoaded()
