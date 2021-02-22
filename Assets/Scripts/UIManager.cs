@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -14,8 +15,7 @@ public class UIManager : MonoBehaviour
         // Put Any In-GameUI Here
         public GameObject gameObject;
         public Image cowFillBar;
-        public Text coinsValueShadow;
-        public Text coinsValue;
+        public TextMeshProUGUI coinsValue;
 
 
     }
@@ -26,8 +26,7 @@ public class UIManager : MonoBehaviour
     {
         public GameObject gameObject;
         public MainMenu mainMenuScript;
-        public Text coinsValueShadow;
-        public Text coinsValue;
+        public TextMeshProUGUI coinsValue;
     }
     [SerializeField] private MenuUI menuUI;
 
@@ -75,7 +74,7 @@ public class UIManager : MonoBehaviour
 
     public void InGameUISync()
     {
-        inGameUI.coinsValue.text = GameControl.Instance.playerData.currentPoints.ToString();
+        inGameUI.coinsValue.SetText(GameControl.Instance.playerData.currentPoints.ToString());
     }
 
     #endregion
@@ -105,7 +104,7 @@ public class UIManager : MonoBehaviour
 
     public void MainMenuSyncUI()
     {
-        menuUI.coinsValue.text = GameControl.Instance.playerData.currentPoints.ToString();
+        menuUI.coinsValue.SetText(GameControl.Instance.playerData.currentPoints.ToString());
     }
 
     public void MainMenuCloseModalWindow()

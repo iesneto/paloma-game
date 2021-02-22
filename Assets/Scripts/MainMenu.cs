@@ -49,20 +49,20 @@ public class MainMenu : MonoBehaviour
         int i = 0;
         foreach(GameObject obj in PlayMenuPanel_CowCounter)
         {
-            Text counter = obj.transform.Find("Counter").GetComponent<Text>();
+            TextMeshProUGUI counter = obj.transform.Find("Counter").GetComponent<TextMeshProUGUI>();
             switch(i)
             {
                 case 0: 
-                    counter.text = GameControl.Instance.playerData.numCow01.ToString();
+                    counter.SetText(GameControl.Instance.playerData.numCow01.ToString());
                     break;
                 case 1:
-                    counter.text = GameControl.Instance.playerData.numCow02.ToString();
+                    counter.SetText(GameControl.Instance.playerData.numCow02.ToString());
                     break;
                 case 2:
-                    counter.text = GameControl.Instance.playerData.numCow03.ToString();
+                    counter.SetText(GameControl.Instance.playerData.numCow03.ToString());
                     break;
                 case 3:
-                    counter.text = GameControl.Instance.playerData.numCow04.ToString();
+                    counter.SetText(GameControl.Instance.playerData.numCow04.ToString());
                     break;
                 default:
                     break;

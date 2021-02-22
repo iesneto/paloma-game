@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class Upgrade : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private UpgradeData upgradeData;
     [SerializeField] private int controlVariableRef;
     [SerializeField] private Image icon;
-    [SerializeField] private Text description;
+    [SerializeField] private TextMeshProUGUI description;
     [SerializeField] private Image[] stars;
-    [SerializeField] private Text valueShadow;
-    [SerializeField] private Text value;
+    //[SerializeField] private Text valueShadow;
+    [SerializeField] private TextMeshProUGUI value;
     [SerializeField] private Image mask;
     [SerializeField] private Color colorOn;
     [SerializeField] private Color maskColorOn;
@@ -55,9 +56,9 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
         }
         switch(GameControl.Instance.playerData.language)
         {
-            case SystemLanguage.Portuguese: description.text = upgradeData.title[0];
+            case SystemLanguage.Portuguese: description.SetText(upgradeData.title[0]);
                 break;
-            default: description.text = upgradeData.title[1];
+            default: description.SetText(upgradeData.title[1]);
                 break;
         }
         for(int i = 0; i < controlVariableRef; i++)
@@ -68,8 +69,8 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
         if (controlVariableRef == upgradeData.value.Length) maxLevelLabel.SetActive(true);
         else
         {
-            value.text = upgradeData.value[controlVariableRef].ToString();
-            valueShadow.text = value.text;
+            value.SetText(upgradeData.value[controlVariableRef].ToString());
+           // valueShadow.text = value.text;
 
             if (GameControl.Instance.playerData.currentPoints >= upgradeData.value[controlVariableRef])
             {
