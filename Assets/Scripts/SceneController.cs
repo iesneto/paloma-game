@@ -11,10 +11,18 @@ public class SceneController : MonoBehaviour
     [SerializeField] private float fadeSpeed;
     [SerializeField] private Vector2Int numberOfScenes;
     [SerializeField] private UIManager uiManager;
+    [SerializeField] private int mainMenuSceneBuildIndex;
+    [SerializeField] private string mainMenuSceneName;
 
     private void Awake()
     {
         uiManager = GetComponent<UIManager>();
+        
+        for(int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            Scene tempScene = SceneManager.GetSceneByBuildIndex(i);
+            if (tempScene.name == mainMenuSceneName) mainMenuSceneBuildIndex = i;
+        }
     }
 
     public void LoadRandomLevel()
@@ -26,7 +34,7 @@ public class SceneController : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        StartCoroutine(LoadSceneAsync(1));
+        StartCoroutine(LoadSceneAsync(mainMenuSceneBuildIndex));
     }
     IEnumerator LoadSceneAsync(int scene)
     {

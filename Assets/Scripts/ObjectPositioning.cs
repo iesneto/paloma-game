@@ -15,9 +15,10 @@ public class ObjectPositioning : MonoBehaviour
         {
             if(hit.collider.gameObject.tag == "Floor")
             {
+                float yMundo = transform.position.y - hit.distance; 
                 // if(hit.distance <= posY)
                 //{
-                transform.position += new Vector3(0, posY - hit.distance, 0);
+                transform.position = new Vector3(transform.position.x, posY + yMundo, transform.position.z);
                 //}
                 
 

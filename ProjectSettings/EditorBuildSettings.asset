@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Copyright/Scenes/OneMap-C.unity
     guid: 35b25368189befd409c4ac45b59659c9
+  - enabled: 1
+    path: Assets/Copyright/Scenes/OneMap-D.unity
+    guid: 3ebae29af458e4840ae2ca20d8bbe8c2
   m_configObjects: {}
