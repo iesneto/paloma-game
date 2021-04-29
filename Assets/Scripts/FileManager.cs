@@ -105,6 +105,8 @@ public class FileManager
         playerData.numCow02 = GameControl.Instance.playerData.numCow02;
         playerData.numCow03 = GameControl.Instance.playerData.numCow03;
         playerData.numCow04 = GameControl.Instance.playerData.numCow04;
+        playerData.level = GameControl.Instance.playerData.level;
+        playerData.language = GameControl.Instance.playerData.language;
     
         //appData.name = Core.Instance.currentProjectName;
 
@@ -126,7 +128,8 @@ public class FileManager
         GameControl.Instance.playerData.numCow02 = playerData.numCow02;
         GameControl.Instance.playerData.numCow03 = playerData.numCow03;
         GameControl.Instance.playerData.numCow04 = playerData.numCow04;
-
+        GameControl.Instance.playerData.level = playerData.level;
+        GameControl.Instance.playerData.language = playerData.language;
     }
 
 
@@ -149,10 +152,11 @@ public class PlayerData
     public int numCow02;
     public int numCow03;
     public int numCow04;
+    public int level;
 
     public PlayerData()
     {
-        language = Application.systemLanguage;
+        //language = Application.systemLanguage;
         rayRadius = 0;
         rayForce = 0 ;
         rayMultiplier = 0;
@@ -165,6 +169,12 @@ public class PlayerData
         numCow02 = 0;
         numCow03 = 0;
         numCow04 = 0;
+        level = 0;
+    }
+
+    public void SetLocalization(SystemLanguage p_language)
+    {
+        language = p_language;
     }
 
 }

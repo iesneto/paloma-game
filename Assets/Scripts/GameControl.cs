@@ -16,48 +16,48 @@ public class GameControl : MonoBehaviour
     [SerializeField] private SceneController sceneController;
     [SerializeField] private UIManager uiManager;
 
-   // [SerializeField] private GameObject inGameUI;
-   // [SerializeField] private Text coinsValueShadow;
-   // [SerializeField] private Text coinsValue;
-   
-    
+    // [SerializeField] private GameObject inGameUI;
+    // [SerializeField] private Text coinsValueShadow;
+    // [SerializeField] private Text coinsValue;
 
-    [System.Serializable]
-    public struct ControlPlayerData
-    {
-        public SystemLanguage language;
-        public int rayRadius;
-        public int rayForce;
-        public int rayMultiplier;
-        public int playerSpeed;
-        public int playerEnergy;
-        public int playerEnergyConsume;
-        public long currentPoints;
-        public long totalPoints;
-        public int numCow01;
-        public int numCow02;
-        public int numCow03;
-        public int numCow04;
-        
 
-        public ControlPlayerData(int p)
-        {
-            language = Application.systemLanguage;
-            rayRadius = p;
-            rayForce = p;
-            rayMultiplier = p;
-            playerSpeed = p;
-            playerEnergy = p;
-            playerEnergyConsume = p;
-            currentPoints = 0;
-            totalPoints = 0;
-            numCow01 = 0;
-            numCow02 = 0;
-            numCow03 = 0;
-            numCow04 = 0;
-        }
-    }
-    public ControlPlayerData playerData;
+
+    //[System.Serializable]
+    //public struct ControlPlayerData
+    //{
+    //    public SystemLanguage language;
+    //    public int rayRadius;
+    //    public int rayForce;
+    //    public int rayMultiplier;
+    //    public int playerSpeed;
+    //    public int playerEnergy;
+    //    public int playerEnergyConsume;
+    //    public long currentPoints;
+    //    public long totalPoints;
+    //    public int numCow01;
+    //    public int numCow02;
+    //    public int numCow03;
+    //    public int numCow04;
+
+    //    public ControlPlayerData(int p)
+    //    {
+    //        language = Application.systemLanguage;
+    //        rayRadius = p;
+    //        rayForce = p;
+    //        rayMultiplier = p;
+    //        playerSpeed = p;
+    //        playerEnergy = p;
+    //        playerEnergyConsume = p;
+    //        currentPoints = 0;
+    //        totalPoints = 0;
+    //        numCow01 = 0;
+    //        numCow02 = 0;
+    //        numCow03 = 0;
+    //        numCow04 = 0;
+    //    }
+    //}
+    //public ControlPlayerData playerData;
+    public PlayerData playerData;
 
     private static GameControl _instance;
     public static GameControl Instance
@@ -85,8 +85,11 @@ public class GameControl : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         _instance = this;
+        playerData = new PlayerData();
+        
         fileManager = new FileManager();
-        playerData = new ControlPlayerData(0);
+        //playerData = new ControlPlayerData(0);
+        
         fileManager.Load();
         sceneController = GetComponent<SceneController>();
         uiManager = GetComponent<UIManager>();
