@@ -61,4 +61,7 @@ crashlytics-build.properties
 
 # Copyright Assets
 /[Aa]ssets/Copyright*
+/[Aa]ssets/Packages*
+/[Aa]ssets/Bundles*
+/[Aa]ssets/Collections*
 

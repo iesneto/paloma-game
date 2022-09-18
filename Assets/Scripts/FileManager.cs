@@ -9,8 +9,10 @@ using System;
 public class FileManager 
 {
     string filePathStandAlone = "Resource";
+    string fileName = "./appData2.db";
 
-    
+
+
 
     public void Save()
     {
@@ -20,7 +22,7 @@ public class FileManager
         // Prepara o arquivo que será salvo em disco
         FileStream file;
         BinaryFormatter bf = new BinaryFormatter();
-        string nomeArquivo = "./appData.db";
+        string nomeArquivo = fileName;
         string filePath;
 
 #if UNITY_STANDALONE && !UNITY_EDITOR && !UNITY_ANDROID && !UNITY_IPHONE
@@ -50,7 +52,9 @@ public class FileManager
         //abre o arquivo que contem os dados em disco
         FileStream file;
         BinaryFormatter bf = new BinaryFormatter();
-        string nomeArquivo = "./appData.db";
+
+        //string nomeArquivo = "./appData.db";
+        string nomeArquivo = fileName;
         string filePath;
 
 #if UNITY_STANDALONE && !UNITY_EDITOR && !UNITY_ANDROID && !UNITY_IPHONE
@@ -64,7 +68,7 @@ public class FileManager
 
         if (VerificaSeArquivoExiste(filePath, nomeArquivo))
         {
-            file = File.Open(filePath + nomeArquivo, FileMode.Open);
+            file = File.Open(filePath + nomeArquivo, FileMode.Open);  
         }
         else
         {
@@ -93,6 +97,10 @@ public class FileManager
         PlayerData playerData = new PlayerData();
 
         // Em atualizações futuras deve-se verificar a versão do arquivo para inclusão de novos dados
+        // Update 17-09-2022: Não precisa verificar versão, da forma que está feito pode ser incluso qualquer
+        // dado novo e inicializa-lo no construtor que ele vai ser gravado no arquivo, a deserialização sempre mantem
+        // a estrutura dos dados da classe, se não possuir algum campo simplesmente é ignorado, e a gravação
+        // é sempre sobrescrita então não verifica se há ou não o campo no arquivo antigo.
         playerData.rayRadius = GameControl.Instance.playerData.rayRadius;
         playerData.rayForce = GameControl.Instance.playerData.rayForce;
         playerData.rayMultiplier = GameControl.Instance.playerData.rayMultiplier;
@@ -107,7 +115,8 @@ public class FileManager
         playerData.numCow04 = GameControl.Instance.playerData.numCow04;
         playerData.level = GameControl.Instance.playerData.level;
         playerData.language = GameControl.Instance.playerData.language;
-    
+        
+
         //appData.name = Core.Instance.currentProjectName;
 
 
@@ -130,6 +139,7 @@ public class FileManager
         GameControl.Instance.playerData.numCow04 = playerData.numCow04;
         GameControl.Instance.playerData.level = playerData.level;
         GameControl.Instance.playerData.language = playerData.language;
+        
     }
 
 
@@ -153,6 +163,7 @@ public class PlayerData
     public int numCow03;
     public int numCow04;
     public int level;
+    
 
     public PlayerData()
     {
