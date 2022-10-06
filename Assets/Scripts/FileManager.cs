@@ -11,7 +11,7 @@ public class FileManager
     string filePathStandAlone = "Resource";
     string fileName = "./appData2.db";
 
-
+   
 
 
     public void Save()
@@ -23,15 +23,7 @@ public class FileManager
         FileStream file;
         BinaryFormatter bf = new BinaryFormatter();
         string nomeArquivo = fileName;
-        string filePath;
-
-#if UNITY_STANDALONE && !UNITY_EDITOR && !UNITY_ANDROID && !UNITY_IPHONE
-
-        filePath = filePathStandAlone;
-#else
-        // este código executará no editor, iphone e android builds
-        filePath = Application.persistentDataPath;
-#endif
+        string filePath = FilePath();
 
         if (VerificaSeArquivoExiste(filePath, nomeArquivo))
         {
@@ -53,17 +45,8 @@ public class FileManager
         FileStream file;
         BinaryFormatter bf = new BinaryFormatter();
 
-        //string nomeArquivo = "./appData.db";
         string nomeArquivo = fileName;
-        string filePath;
-
-#if UNITY_STANDALONE && !UNITY_EDITOR && !UNITY_ANDROID && !UNITY_IPHONE
-
-        filePath = filePathStandAlone;
-#else
-        // este código executará no editor, iphone e android builds
-        filePath = Application.persistentDataPath;
-#endif
+        string filePath = FilePath();
 
 
         if (VerificaSeArquivoExiste(filePath, nomeArquivo))
@@ -73,10 +56,9 @@ public class FileManager
         else
         {
             file = File.Create(filePath + nomeArquivo);
-            //return;
         }
         // Prepara a estrutura de dados no app
-        PlayerData playerData = new PlayerData();
+        PlayerData playerData = GameControl.Instance.playerData;
         if (file.Length != 0)
             playerData = (PlayerData)bf.Deserialize(file);
 
@@ -115,7 +97,12 @@ public class FileManager
         playerData.numCow04 = GameControl.Instance.playerData.numCow04;
         playerData.level = GameControl.Instance.playerData.level;
         playerData.language = GameControl.Instance.playerData.language;
-        
+        // Update 01/10/2022 - Ivo Seitenfus
+        playerData.createDate = GameControl.Instance.playerData.createDate;
+        playerData.lastSaved = GameControl.Instance.playerData.lastSaved;
+        playerData.timePlayed = GameControl.Instance.playerData.timePlayed;
+        playerData.flyDistance = GameControl.Instance.playerData.flyDistance;
+
 
         //appData.name = Core.Instance.currentProjectName;
 
@@ -139,56 +126,42 @@ public class FileManager
         GameControl.Instance.playerData.numCow04 = playerData.numCow04;
         GameControl.Instance.playerData.level = playerData.level;
         GameControl.Instance.playerData.language = playerData.language;
-        
+        // Update 01/10/2022 - Ivo Seitenfus
+        GameControl.Instance.playerData.createDate = playerData.createDate;
+        GameControl.Instance.playerData.lastSaved = playerData.lastSaved;
+        GameControl.Instance.playerData.timePlayed = playerData.timePlayed;
+        GameControl.Instance.playerData.flyDistance = playerData.flyDistance;
+
+    }
+
+    public void VerifySavedFiles()
+    {
+
+        DirectoryInfo directory = new DirectoryInfo(FilePath());
+        FileInfo[] fileInfo = directory.GetFiles("*.db");
+        foreach(FileInfo file in fileInfo)
+        {
+            // FUTURE: Manipulation of multiple instances of saved files
+        }
+    }
+
+    string FilePath()
+    {
+        string filePath;
+#if UNITY_STANDALONE && !UNITY_EDITOR && !UNITY_ANDROID && !UNITY_IPHONE
+
+        filePath = filePathStandAlone;
+#else
+        // este código executará no editor, iphone e android builds
+        filePath = Application.persistentDataPath;
+#endif
+        return filePath;
     }
 
 
 }
 
-[System.Serializable]
-public class PlayerData
-{
-    
-    public SystemLanguage language;
-    public int rayRadius;
-    public int rayForce;
-    public int rayMultiplier;
-    public int playerSpeed;
-    public int playerEnergy;
-    public int playerEnergyConsume;
-    public long currentPoints;
-    public long totalPoints;
-    public int numCow01;
-    public int numCow02;
-    public int numCow03;
-    public int numCow04;
-    public int level;
-    
 
-    public PlayerData()
-    {
-        //language = Application.systemLanguage;
-        rayRadius = 0;
-        rayForce = 0 ;
-        rayMultiplier = 0;
-        playerSpeed = 0;
-        playerEnergy = 0;
-        playerEnergyConsume = 0;
-        currentPoints = 0;
-        totalPoints = 0;
-        numCow01 = 0;
-        numCow02 = 0;
-        numCow03 = 0;
-        numCow04 = 0;
-        level = 0;
-    }
-
-    public void SetLocalization(SystemLanguage p_language)
-    {
-        language = p_language;
-    }
-
-}
 
 
 

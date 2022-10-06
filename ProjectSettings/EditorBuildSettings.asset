@@ -12,15 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: c7284054bd181924fa6654f97d6094b7
   - enabled: 1
-    path: Assets/Scenes/OneMap-A.unity
-    guid: 45c272d7d1707204f8e506340f7ef1d8
-  - enabled: 1
-    path: Assets/Scenes/OneMap-B.unity
-    guid: 29d0388bb3c63a845ad406859531d7b0
-  - enabled: 1
-    path: Assets/Scenes/OneMap-C.unity
-    guid: 35b25368189befd409c4ac45b59659c9
-  - enabled: 1
-    path: Assets/Scenes/OneMap-D.unity
-    guid: 3ebae29af458e4840ae2ca20d8bbe8c2
+    path: Assets/Scenes/1PlatformA.unity
+    guid: 6d515b61bd0aa334c8e022e21d4e30e9
   m_configObjects: {}

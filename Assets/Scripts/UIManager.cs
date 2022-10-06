@@ -8,6 +8,9 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private GameObject loadingScreenObject;
     [SerializeField] private Slider loadingBar;
+    [SerializeField] private float fadeSpeed;
+    [SerializeField] private Image fadeImage;
+
     [System.Serializable]
     private struct InGameUI
     {
@@ -56,6 +59,27 @@ public class UIManager : MonoBehaviour
     {
         loadingBar.value = v;
     }
+
+    public void FadeOutBlackScreen()
+    {
+        fadeImage.gameObject.transform.parent.gameObject.SetActive(true);
+        StartCoroutine("FadeScreen");
+    }
+
+    IEnumerator FadeScreen()
+    {
+        Color color = fadeImage.color;
+        for(float i = 1; i > 0; i -= fadeSpeed)
+        {
+            color = fadeImage.color;
+            color.a = i;
+            fadeImage.color = color;
+            yield return new WaitForSeconds(0.01f);
+        }
+        color.a = 1;
+        fadeImage.color = color;
+        fadeImage.gameObject.transform.parent.gameObject.SetActive(false);
+    }
     #endregion
 
     #region IN_GAME_UI_METHODS
@@ -81,12 +105,22 @@ public class UIManager : MonoBehaviour
 
     #region MENU_UI_METHODS
 
-    public void MainMenuStart(bool _startedPlaying)
+    public void MainMenuStart()
     {
         MainMenuShowUI(true);
         InGameUIShow(false);
-        if (_startedPlaying) menuUI.mainMenuScript.ShowPlayMenu();
-            else menuUI.mainMenuScript.ShowIntroMenu();
+    }
+
+    public void LoadMainMenuIntro()
+    {
+        MainMenuStart();
+        menuUI.mainMenuScript.ShowIntroMenu();
+    }
+
+    public void LoadMainMenuPlay()
+    {
+        MainMenuStart();
+        menuUI.mainMenuScript.ShowPlayMenu();
     }
 
 

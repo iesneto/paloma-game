@@ -260,49 +260,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 837106001, guid: 863c917982cbd014cb93bfdad16ded00, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 886318556, guid: 863c917982cbd014cb93bfdad16ded00, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1552015924, guid: 863c917982cbd014cb93bfdad16ded00, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -25
-      objectReference: {fileID: 0}
-    - target: {fileID: 2049430739, guid: 863c917982cbd014cb93bfdad16ded00, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 1094.0317
-      objectReference: {fileID: 0}
-    - target: {fileID: 2049430739, guid: 863c917982cbd014cb93bfdad16ded00, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 1050.5657
-      objectReference: {fileID: 0}
-    - target: {fileID: 2049430739, guid: 863c917982cbd014cb93bfdad16ded00, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.000041962
-      objectReference: {fileID: 0}
-    - target: {fileID: 2049430739, guid: 863c917982cbd014cb93bfdad16ded00, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -763
-      objectReference: {fileID: 0}
-    - target: {fileID: 3346436383465712165, guid: 863c917982cbd014cb93bfdad16ded00,
-        type: 3}
-      propertyPath: m_ScreenMatchMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3346436383465712166, guid: 863c917982cbd014cb93bfdad16ded00,
-        type: 3}
-      propertyPath: m_RenderMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3346436384399215424, guid: 863c917982cbd014cb93bfdad16ded00,
-        type: 3}
-      propertyPath: playerData.language
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 3346436384399215425, guid: 863c917982cbd014cb93bfdad16ded00,
         type: 3}
       propertyPath: m_RootOrder

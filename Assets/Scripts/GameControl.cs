@@ -15,6 +15,10 @@ public class GameControl : MonoBehaviour
     [SerializeField] private FileManager fileManager;
     [SerializeField] private SceneController sceneController;
     [SerializeField] private UIManager uiManager;
+    [SerializeField] private Audio audioManager;
+    
+    public delegate void  GameEvent();
+    public static event GameEvent playerUpdate, addCoins, addEnergy, addCows;
 
     // [SerializeField] private GameObject inGameUI;
     // [SerializeField] private Text coinsValueShadow;
@@ -66,7 +70,7 @@ public class GameControl : MonoBehaviour
         {
             if (_instance == null)
             {
-                Debug.LogError("Core is null");
+                Debug.Log("Core is null");
             }
 
             return _instance;
@@ -86,16 +90,15 @@ public class GameControl : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         _instance = this;
         playerData = new PlayerData();
+        playerData.InitLanguage();
         
         fileManager = new FileManager();
-        //playerData = new ControlPlayerData(0);
-        
-        fileManager.Load();
+
+        LoadData();
         sceneController = GetComponent<SceneController>();
         uiManager = GetComponent<UIManager>();
-        uiManager.MainMenuStart(startedPlaying);
+        StartMainMenu();
 
-        
     }
 
 
@@ -118,14 +121,38 @@ public class GameControl : MonoBehaviour
     public void LoadMainMenu()
     {
         sceneController.LoadMainMenu();
-        uiManager.MainMenuStart(startedPlaying);
-        //ShowInGameUI();
-        
+        SaveData();
+        //StartMainMenu();
+    }
+
+    public void StartMainMenu()
+    {
+        if (startedPlaying)
+        {
+            uiManager.LoadMainMenuPlay();
+            PlayDockStationMusic();
+        }
+        else
+        {
+            uiManager.LoadMainMenuIntro();
+            PlayIntroMusic();
+        }
+    }
+
+    public void PlayDockStationMusic()
+    {
+        audioManager.PlayDockStationMusic();
+    }
+
+    public void PlayIntroMusic()
+    {
+        audioManager.PlayIntroMusic();
     }
 
     public void LevelLoaded()
     {
         uiManager.InGameUIStart();
+        audioManager.PlayStageMusic();
     }
 
     public void AddCoins(CowBehavior cow)
@@ -150,7 +177,7 @@ public class GameControl : MonoBehaviour
                 break;
         }
         uiManager.InGameUISync();
-        fileManager.Save();
+        SaveData();
     }
 
     public void PurchaseUpgrade(UpgradeData.ControlVar upgradeType, long value)
@@ -179,8 +206,37 @@ public class GameControl : MonoBehaviour
                 break;
         }
         playerData.currentPoints -= value;
-        fileManager.Save();
+        SaveData();
         uiManager.MainMenuShowPlayMenu();
+    }
+
+    public void SaveData()
+    {
+        playerData.lastSaved = DateTime.Now;
+        playerData.timePlayed = playerData.lastSaved - playerData.createDate;
+
+        
+        fileManager.Save();
+        TriggerPlayerUpdate();
+    }
+
+    public void LoadData() 
+    {
+        fileManager.Load();
+        TriggerPlayerUpdate();
+    }
+
+    private void TriggerPlayerUpdate()
+    {
+        if(playerUpdate != null)
+        {
+            playerUpdate();
+        }
+    }
+
+    public void AddFlyDistance(float distance)
+    {
+        playerData.flyDistance += distance;
     }
 
     //public void MainMenuLoaded()

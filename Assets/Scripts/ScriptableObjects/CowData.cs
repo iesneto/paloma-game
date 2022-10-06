@@ -9,5 +9,6 @@ public class CowData : ScriptableObject
     public int reward;
     public float mass;
     public float movementSpeed;
+    public int tier;
 
 }

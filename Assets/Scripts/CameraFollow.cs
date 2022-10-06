@@ -9,6 +9,8 @@ public class CameraFollow : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     public float dampTime = 0.2f;
     public float rotateDampTime = 0.2f;
+    private Vector3 lookTarget;
+    public Vector3 lookOffset;
 
     public void SetPlayer(GameObject player)
     {
@@ -26,12 +28,14 @@ public class CameraFollow : MonoBehaviour
         Vector3 destination = target.transform.position + offset;
 
 
-        
 
         transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
 
-        
-        Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
+        lookTarget = target.transform.position + lookOffset;
+
+
+        //Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
+        Quaternion targetRotation = Quaternion.LookRotation(lookTarget - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotateDampTime);
     }
 

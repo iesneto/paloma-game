@@ -22,6 +22,8 @@ public class CowBehavior : MonoBehaviour
     private Vector2 distanceLimits;
     private bool backFromWalk;
     //private bool grounded;
+    public float destinyDistance;
+    private PlayerBehavior player;
 
 
     private void Start()
@@ -35,7 +37,7 @@ public class CowBehavior : MonoBehaviour
         rotationSpeed = movementSpeed;
         distanceLimits = new Vector2(15, 20);
 
-        StartCoroutine(ResetCowFromGrabbed());
+        //StartCoroutine(ResetCowFromGrabbed());
         //GotoIdle();
     }
 
@@ -131,7 +133,10 @@ public class CowBehavior : MonoBehaviour
             //gameObject.transform.Translate(direction * movementSpeed * Time.deltaTime);
             gameObject.transform.position += (gameObject.transform.forward * movementSpeed * Time.deltaTime);
             //gameObject.transform.position = Vector3.Lerp(transform.position, destination, movementSpeed * Time.deltaTime);
-            if (Vector3.Distance(transform.position, destination) <= 1.5f)
+            destinyDistance = Vector3.Distance(transform.position, destination);
+
+            //if (Vector3.Distance(transform.position, destination) <= 1.5f)
+            if (destinyDistance <= 1.5f)
             {
                 walk = false;
                 EndAnimation(3);
@@ -165,7 +170,7 @@ public class CowBehavior : MonoBehaviour
             //Vector3 bias = sight.transform.right * calculo;
             //Vector3 direction = forward + bias;
             Ray ray = new Ray(transform.position, direction);
-            //Debug.DrawRay(transform.position, dest - transform.position, Color.blue, 5);
+            Debug.DrawRay(transform.position, dest - transform.position, Color.blue, 5);
             if (!Physics.Raycast(ray, out hit, sightDistance))
             {
 
@@ -217,12 +222,17 @@ public class CowBehavior : MonoBehaviour
         if (collision.gameObject.tag == "Floor")
         {
             //grounded = true;
-            if (grabbed)
-            {
+            //if (grabbed)
+            //{
 
+            //    // update 18/09/2022 - Ivo Seitenfus
+            //    // moving outside this if
+            //    //StartCoroutine("ResetCowFromGrabbed");
+            //}
 
-                StartCoroutine("ResetCowFromGrabbed");
-            }
+            // executing every time detects this collision
+            StartCoroutine("ResetCowFromGrabbed");
+
 
         }
     }
@@ -236,7 +246,7 @@ public class CowBehavior : MonoBehaviour
         //}
     }
 
-    public void OnGrabbed()
+    public void OnGrabbed(PlayerBehavior _player)
     {
         if (!grabbed)
         {
@@ -244,20 +254,32 @@ public class CowBehavior : MonoBehaviour
             grabbed = true;
             walk = false;
 
-            anim.SetBool("levita", true);
+            //Update 19/09/2022 - Ivo Seitenfus
+            // New grab animation
+            //anim.SetBool("levita", true);
+            
             anim.SetBool("observa", false);
             anim.SetBool("pasta", false);
             anim.SetBool("muge", false);
             anim.SetBool("walk", false);
+            anim.SetBool("grab", true);
+            player = _player;
         }
 
+    }
+
+    public void StartPlayerGrabAnimation()
+    {
+        player.StartGrabAnimation();
     }
 
 
     IEnumerator ResetCowFromGrabbed()
     {
         yield return new WaitForSeconds(1f);
-        anim.SetBool("levita", false);
+        //Update 19/09/2022 - Ivo Seitenfus
+        //anim.SetBool("levita", false);
+        anim.SetBool("grab", false);
         grabbed = false;
         idle = true;
         rb.velocity = new Vector3(0f, 0f, 0f);
@@ -266,6 +288,7 @@ public class CowBehavior : MonoBehaviour
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, rotationSpeed);
         }
+
         if (!waitingCoroutine)
             GotoIdle();
 
@@ -277,5 +300,14 @@ public class CowBehavior : MonoBehaviour
     public int GetReward()
     {
         return cowData.reward;
+    }
+
+    public void OnGrab()
+    {
+        if(player != null)
+        {
+            player.GetCow(this.gameObject);
+        }
+
     }
 }
