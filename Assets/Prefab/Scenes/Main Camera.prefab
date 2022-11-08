@@ -98,10 +98,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  offset: {x: 0, y: 10, z: -15}
+  offset: {x: 0, y: 17, z: -20}
   dampTime: 0.2
   rotateDampTime: 0.2
-  lookOffset: {x: 0, y: -7, z: 0}
+  lookOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &3094373330607898271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,12 +114,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 0
+  m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1

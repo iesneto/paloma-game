@@ -4,14 +4,21 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
 public class SceneController : MonoBehaviour
 {
+    [System.Serializable] 
+    private struct ScenesForPlayerLevel
+    {
+        public int[] scenesReferences;
+    }
+    [SerializeField] private ScenesForPlayerLevel[] scenesForPlayerLevel;
+
     [SerializeField] private GameObject PlayerPrefab;
     [SerializeField] private Transform playerStartLocation;
     [SerializeField] private GameObject CameraPrefab;
     [SerializeField] private GameObject[] spawners;
     [SerializeField] private int sceneCowMultiplier;
+    [SerializeField] private int sceneTotalCows;
     [SerializeField] private bool isLoading = false;
 
     [SerializeField] private float fadeSpeed;
@@ -39,7 +46,7 @@ public class SceneController : MonoBehaviour
     public void LoadRandomLevel()
     {
         //int scn = Random.Range(numberOfScenes.x, numberOfScenes.y + 1);
-        int scn = Random.Range(outGameScenes, inGameScenes + 1);
+        int scn = Random.Range(outGameScenes, outGameScenes + inGameScenes);
         
         StartCoroutine(LoadSceneAsync(scn));
     }
@@ -66,8 +73,8 @@ public class SceneController : MonoBehaviour
         StartCoroutine(FadeOutLoadingScreen());
         if (scene != mainMenuSceneBuildIndex)
         {
-            GameControl.Instance.LevelLoaded();
             InitializeScene();
+            GameControl.Instance.LevelLoaded();   
         }
         else
         {
@@ -102,7 +109,9 @@ public class SceneController : MonoBehaviour
         GameObject cam = Instantiate(CameraPrefab, playerStartLocation.position, Quaternion.identity);
         cam.GetComponent<CameraFollow>().SetPlayer(player);
         int playerLevel = GameControl.Instance.playerData.level;
-        int cowsPerSpawner = (playerLevel * sceneCowMultiplier) / spawners.Length;
+        int cowsPerSpawner = (playerLevel * sceneCowMultiplier);
+        sceneTotalCows = cowsPerSpawner * spawners.Length;
+        GameControl.Instance.SceneTotalCows = sceneTotalCows;
 
         foreach (GameObject obj in spawners)
         {
@@ -110,5 +119,10 @@ public class SceneController : MonoBehaviour
             // Inicializar os spawners com um numero calculado de vacas de acordo com o level do player
             cs.Initialize(cowsPerSpawner);
         }
+    }
+
+    public int SceneTotalCows()
+    {
+        return sceneTotalCows;
     }
 }

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeac6c17b98bb847807cae8d87f95d6, type: 3}
+  m_Name: Vaca00Data
+  m_EditorClassIdentifier: 
+  id: 0
+  reward: 10
+  xp: 5
+  mass: 1
+  movementSpeed: 1
+  tier: 0
+  value: 0
+  levelToUnlock: 0
+  icon: {fileID: 21300000, guid: aead1bbdbb7139d47bb1ddf6069ebfc8, type: 3}
+  gamePrefab: {fileID: 7924381965852854766, guid: da842b515704ca2488d512ad07b41d75,
+    type: 3}
+  menuPrefab: {fileID: 6007300632129225617, guid: ad3e852bbdf1df14abed71b8a2e1441f,
+    type: 3}

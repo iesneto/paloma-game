@@ -8,10 +8,10 @@ using TMPro;
 public class Upgrade : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private UpgradeData upgradeData;
-    [SerializeField] private int controlVariableRef;
+    [SerializeField] private int currentLevel;
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI description;
-    [SerializeField] private Image[] stars;
+    [SerializeField] private List<Image> stars;
     //[SerializeField] private Text valueShadow;
     [SerializeField] private TextMeshProUGUI value;
     [SerializeField] private Image mask;
@@ -22,6 +22,9 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
     //[SerializeField] private MainMenu mainMenu;
     [SerializeField] private UIManager uiManager;
     [SerializeField] private GameObject maxLevelLabel;
+    [SerializeField] private GameObject levelIconsArea;
+    [SerializeField] private GameObject levelIconPrefab;
+    [SerializeField] private Image purchaseButtonIcon;
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -31,48 +34,108 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
     public void SetupUpgrade()
     {
         icon.sprite = upgradeData.icon;
+
+        SetCurrentLevel();
+        SetLanguage();
+        if (levelIconsArea.transform.childCount == 0)
+        {
+            AddLevelIconsPrefabs();
+        }
+        LightOnLevelIcons();
+        SetPurchaseButton();
+
+    }
+
+    private void SetCurrentLevel()
+    {
         switch (upgradeData.type)
         {
-            case UpgradeData.ControlVar.RAYRADIUS: 
-                controlVariableRef = GameControl.Instance.playerData.rayRadius;
+            case UpgradeData.ControlVar.RAYRADIUS:
+                currentLevel = GameControl.Instance.playerData.rayRadius;
                 break;
             case UpgradeData.ControlVar.RAYFORCE:
-                controlVariableRef = GameControl.Instance.playerData.rayForce;
+                currentLevel = GameControl.Instance.playerData.rayForce;
                 break;
             case UpgradeData.ControlVar.RAYMULTIPLIER:
-                controlVariableRef = GameControl.Instance.playerData.rayMultiplier;
+                currentLevel = GameControl.Instance.playerData.rayMultiplier;
                 break;
             case UpgradeData.ControlVar.PLAYERSPEED:
-                controlVariableRef = GameControl.Instance.playerData.playerSpeed;
+                currentLevel = GameControl.Instance.playerData.playerSpeed;
                 break;
             case UpgradeData.ControlVar.PLAYERENERGY:
-                controlVariableRef = GameControl.Instance.playerData.playerEnergy;
+                currentLevel = GameControl.Instance.playerData.playerEnergy;
                 break;
             case UpgradeData.ControlVar.PLAYERENERGYCONSUME:
-                controlVariableRef = GameControl.Instance.playerData.playerEnergyConsume;
+                currentLevel = GameControl.Instance.playerData.playerEnergyConsume;
                 break;
             default:
                 break;
         }
-        switch(GameControl.Instance.playerData.language)
-        {
-            case SystemLanguage.Portuguese: description.SetText(upgradeData.title[0]);
-                break;
-            default: description.SetText(upgradeData.title[1]);
-                break;
-        }
-        for(int i = 0; i < controlVariableRef; i++)
-        {
-            stars[i].color = colorOn;
-        }
+    }
 
-        if (controlVariableRef == upgradeData.value.Length) maxLevelLabel.SetActive(true);
+    private void SetLanguage()
+    {
+        switch (GameControl.Instance.playerData.language)
+        {
+            case SystemLanguage.Portuguese:
+                description.SetText(upgradeData.title[0]);
+                break;
+            default:
+                description.SetText(upgradeData.title[1]);
+                break;
+        }
+    }
+
+    private void AddLevelIconsPrefabs()
+    {
+        for(int i = 0; i < upgradeData.value.Length; i++)
+        {
+            var child = Instantiate(levelIconPrefab);
+            child.transform.SetParent(levelIconsArea.transform);
+            Image childImage = child.GetComponent<Image>();
+            stars.Add(childImage);
+            if(upgradeData.valueIcon.Length > 1)
+            {
+                childImage.sprite = upgradeData.valueIcon[i];
+            }
+            else
+            {
+                childImage.sprite = upgradeData.valueIcon[0];
+            }
+        }
+    }
+
+
+    private void LightOnLevelIcons()
+    {
+        for (int i = 0; i < currentLevel; i++)
+        {
+            if(stars.Count > i)
+            {
+                stars[i].color = colorOn;
+            }
+            
+        }
+    }
+
+    public void SetPurchaseButton()
+    {
+        if(upgradeData.valueIcon.Length > 1 && currentLevel < upgradeData.valueIcon.Length)
+        {
+            purchaseButtonIcon.sprite = upgradeData.valueIcon[currentLevel];
+        }
         else
         {
-            value.SetText(upgradeData.value[controlVariableRef].ToString());
-           // valueShadow.text = value.text;
+            purchaseButtonIcon.sprite = upgradeData.valueIcon[0];
+        }
 
-            if (GameControl.Instance.playerData.currentPoints >= upgradeData.value[controlVariableRef])
+        if (currentLevel >= upgradeData.value.Length) maxLevelLabel.SetActive(true);
+        else
+        {
+            value.SetText(upgradeData.value[currentLevel].ToString());
+            // valueShadow.text = value.text;
+
+            if (GameControl.Instance.playerData.currentCoins >= upgradeData.value[currentLevel])
             {
                 mask.color = maskColorOn;
                 upgradeButton.enabled = true;
@@ -93,7 +156,7 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
 
     public void PurchaseUpgrade()
     {
-        GameControl.Instance.PurchaseUpgrade(upgradeData.type, upgradeData.value[controlVariableRef]);
+        GameControl.Instance.PurchaseUpgrade(upgradeData.type, upgradeData.value[currentLevel]);
     }
 
     public Sprite GetUpgradeIcon()
@@ -103,6 +166,11 @@ public class Upgrade : MonoBehaviour, IPointerClickHandler
 
     public long GetUpgradeValue()
     {
-        return upgradeData.value[controlVariableRef];
+        return upgradeData.value[currentLevel];
+    }
+
+    public Image GetPurchaseButtonIcon()
+    {
+        return purchaseButtonIcon;
     }
 }

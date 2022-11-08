@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a8e60a760208e344b14679839b86e8d, type: 3}
+  m_Name: disco09
+  m_EditorClassIdentifier: 
+  id: 9
+  value: 250
+  levelToUnlock: 4
+  icon: {fileID: 21300000, guid: a5406de24028aa24c82b7db5809be804, type: 3}
+  model: {fileID: 7021849156242837296, guid: 76ca3bcae21c4a34194155d11dbfdd21, type: 3}

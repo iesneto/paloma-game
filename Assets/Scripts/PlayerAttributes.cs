@@ -101,7 +101,7 @@ public class PlayerAttributes : MonoBehaviour
             rayModelScaleProperty = new Vector3(1 + (0.25f * control.playerData.rayRadius), 1, 1 + (0.25f * control.playerData.rayRadius));
             rayColliderHeightProperty = 14 + (0.5f * control.playerData.rayRadius);
             rayColliderCenterYProperty = -RayColliderHeight / 2;
-            rayMultiplierProperty = control.playerData.rayMultiplier;
+            rayMultiplierProperty = 1 + control.playerData.rayMultiplier;
             maxEnergyProperty = 100 + (control.playerData.playerEnergy * 20);
             currentEnergyProperty = MaxEnergy;
             energyConsumeProperty = 1 - (0.1f * control.playerData.playerEnergyConsume);

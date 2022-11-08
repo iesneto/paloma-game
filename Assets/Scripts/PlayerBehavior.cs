@@ -7,7 +7,9 @@ using UnityEngine.ParticleSystemJobs;
 
 public class PlayerBehavior : MonoBehaviour
 {
+    [SerializeField] private bool locked;
     public float grabRate;
+    public bool instantGrab;
     [SerializeField] private PlayerAttributes playerAttributes;
     [SerializeField] private ObjectPositioning levelingScript;
     [SerializeField] private GameObject raio;
@@ -16,8 +18,9 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private ParticleSystem rayObjectTractor;
     [SerializeField] private ParticleSystem turret;
     [SerializeField] private Transform turretTransform;
-    [SerializeField] private Vector3 turretDirection;
-    [SerializeField] private float turretRotationSpeed;
+    [SerializeField] private float turretTiltAmount;
+    //[SerializeField] private Vector3 turretDirection;
+    //[SerializeField] private float turretRotationSpeed;
 
     //[SerializeField] private float movementSpeed;
     [SerializeField] private float deacceleration;
@@ -37,40 +40,77 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private long score;
     [SerializeField] private Transform model;
     [SerializeField] private float speedMagnitude;
-    //[SerializeField] private float flyDistance;
     [SerializeField] private Animator animator;
+    [SerializeField] private Transform coinsPosition;
+    [SerializeField] private Transform experiencePosition;
+    [SerializeField] private GameObject coinsPickUpPrefab;
+    [SerializeField] private GameObject experiencePickUpPrefab;
+    [SerializeField] private FlyingSaucerAudio flyingSaucerAudio;
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private float flyingDistance;
+    [SerializeField] private float flyingDistanceThreshold;
+    [SerializeField] private GameObject modelPlaceholder;
+    private bool grabAnimation;
+    //[SerializeField] private List<GameObject> flyingSaucerPrefabs;
+
     //public Text outputText;
     private Rigidbody rb;
-    
 
-    private Controls controls;
-    
+
+    // private Controls controls;
+    //private PlayerControls controls;
 
     private void Awake()
     {
-        controls = new Controls();
+        //controls = new PlayerControls();
         playerAttributes = GetComponent<PlayerAttributes>();
         playerAttributes.InitializeAttributes();
+        //animator = model.gameObject.GetComponentInChildren<Animator>();
+        animator = model.gameObject.GetComponent<Animator>();
 
         levelingScript = GetComponent<ObjectPositioning>();
 
         raio.SetActive(false);
-        
+        flyingSaucerAudio.StartFlyingSaucer();
         
 
         rb = gameObject.GetComponent<Rigidbody>();
-        
+
+        LoadFlyingSaucerModel();
+    }
+
+    void LoadFlyingSaucerModel()
+    {
+        if(GameControl.Instance != null)
+        {
+            Instantiate(GameControl.Instance.FlyingSaucerModelByIndex(GameControl.Instance.playerData.flyingSaucerModelId), model);
+        }
+        else
+        {
+            Instantiate(modelPlaceholder, model);
+        }
+    }
+
+    public void Lock()
+    {
+        locked = true;
+    }
+
+    public void Unlock()
+    {
+        locked = false;
     }
 
     private void OnEnable()
     {
-        controls.Player.Enable();
-        controls.UI.Enable();
-        controls.Player.MouseMove.Enable();
-        controls.Player.MouseMove.started += OnTouchMove;
-        controls.Player.MouseMove.performed += OnTouchMove;
-        controls.Player.MouseMove.canceled += OnTouchMove;
-        
+        //controls.Player.Enable();
+        //controls.UI.Enable();
+        //controls.Player.MouseMove.Enable();
+        //controls.Player.MouseMove.started += OnTouchMove;
+        //controls.Player.MouseMove.performed += OnTouchMove;
+        //controls.Player.MouseMove.canceled += OnTouchMove;
+
+
         // controls.Player.Press.Enable();
         // controls.Player.PressRelease.Enable();
         //// controls.Player.Press.Enable();
@@ -88,15 +128,23 @@ public class PlayerBehavior : MonoBehaviour
 
     }
 
+    
+
     private void OnDisable()
     {
-        controls.Player.Disable();
-        controls.UI.Disable();
-        controls.Player.MouseMove.Disable();
-        controls.Player.MouseMove.started -= OnTouchMove;
-        controls.Player.MouseMove.performed -= OnTouchMove;
-        controls.Player.MouseMove.canceled -= OnTouchMove;
         
+        //controls.Player.Move.started -= OnTouchMove;
+        //controls.Player.Move.performed -= OnTouchMove;
+        //controls.Player.Move.canceled -= OnTouchMove;
+        //controls.Player.Move.Disable();
+        //controls.Player.Disable();
+        //controls.UI.Disable();
+        //controls.Disable();
+        //controls.Dispose();
+        
+        // até aqui
+
+
         //controls.Player.Press.Disable();
         //controls.Player.PressRelease.Disable();
         ////controls.Player.Press.Disable();
@@ -115,34 +163,69 @@ public class PlayerBehavior : MonoBehaviour
 
     //private void Update() => Move();
 
-    public void OnTouchMove(InputAction.CallbackContext context)
+    //public void OnTouchMove(InputAction.CallbackContext context)
+    //{
+        
+    //    if (locked) return;
+        
+    //    //update 19/09/2022 - Ivo Seitenfus
+    //    // Automatic grab now executed by an coroutine
+    //    //if(context.started)
+    //    //{
+            
+    //    //    if (!move && (cowsInRay.Count > 0))
+    //    //    {
+    //    //        LevitateCow();
+    //    //    }
+    //    //}
+
+    //    if (context.performed /*&& !grab*/)
+    //    {
+
+    //        //pressStartPosition = Pointer.current.position.ReadValue();
+            
+    //        //move = true;
+    //        //turret.Play();
+    //        //StartCoroutine("Moving");
+    //    }
+
+        
+    //    if (context.canceled)
+    //    {
+            
+    //        //turret.Stop();
+    //        //move = false;
+            
+    //    }
+    //}
+
+    private void Update()
     {
         
-        //update 19/09/2022 - Ivo Seitenfus
-        // Automatic grab now executed by an coroutine
-        //if(context.started)
-        //{
-            
-        //    if (!move && (cowsInRay.Count > 0))
-        //    {
-        //        LevitateCow();
-        //    }
-        //}
+        if (locked) return;
 
-        if (context.performed && !grab)
+       
+        Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
+
+        if (input !=  Vector2.zero)
         {
+            if(!move)
+            {
+                flyingSaucerAudio.PlayMove();
+                move = true;
+                turret.Play();
+                StartCoroutine("Moving");
+            }
             
-            pressStartPosition = Pointer.current.position.ReadValue();
-            move = true;
-            turret.Play();
-            StartCoroutine("Moving");
         }
-
-        if (context.canceled)
+        else
         {
-            
-            move = false;
-            
+            if(move)
+            {
+                flyingSaucerAudio.StopMove();
+                move = false;
+                turret.Stop();
+            }
         }
     }
 
@@ -150,16 +233,11 @@ public class PlayerBehavior : MonoBehaviour
     {
         List<GameObject> cows = new List<GameObject>();
 
-        //update 18/09/2022 - Ivo Seitenfus
-        // need to verify gamecontrol for debug purposes
         int rayMultiplier = playerAttributes.RayMultiplier;
-        //if (GameControl.Instance != null) rayMultiplier = GameControl.Instance.playerData.rayMultiplier;
-
-        //if (cowsInRay.Count > GameControl.Instance.playerData.rayMultiplier)
+        
         if (cowsInRay.Count > rayMultiplier)
         {
 
-            //for (int i = 0; i <= GameControl.Instance.playerData.rayMultiplier; i++)
             for (int i = 0; i <= rayMultiplier; i++)
             {
                 cows.Add(cowsInRay[i]);
@@ -177,13 +255,7 @@ public class PlayerBehavior : MonoBehaviour
             cowRb.AddForce((grabPoint.position - c.transform.position).normalized * playerAttributes.RayForce);
             c.GetComponent<CowBehavior>().OnGrabbed(this);
         }
-        //if(Vector3.Distance(grabPoint.position, cow.transform.position) < grabDistance)
-        //{
-        //    score += 1;
-        //    outputText.text = score.ToString();
-        //    cowsInRay.Remove(cow);
-        //    Destroy(cow);
-        //}
+       
     }
 
     IEnumerator Moving()
@@ -194,19 +266,24 @@ public class PlayerBehavior : MonoBehaviour
         {
             
             levelingScript.Leveling();
+
+            //pressCurrentPosition = Pointer.current.position.ReadValue();
+            //speedMagnitude = Vector3.Distance(pressStartPosition, pressCurrentPosition);
+            //if (speedMagnitude >= 100) speedMagnitude = 1f;
+            //else speedMagnitude /= 100f;
+            //Vector2 speed = (pressCurrentPosition - pressStartPosition).normalized * speedMagnitude;
+
+            //direction = new Vector3(speed.x, 0, speed.y);
+            Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
+
+            direction = new Vector3(input.x, 0, input.y);
+
+            //float flyDistance = (direction * playerAttributes.MovementSpeed * Time.deltaTime).magnitude;
             
-            pressCurrentPosition = Pointer.current.position.ReadValue();
-            speedMagnitude = Vector3.Distance(pressStartPosition, pressCurrentPosition);
-            if (speedMagnitude >= 100) speedMagnitude = 1f;
-            else speedMagnitude /= 100f;
-            Vector2 speed = (pressCurrentPosition - pressStartPosition).normalized * speedMagnitude;
 
-            direction = new Vector3(speed.x, 0, speed.y);
-
-            float flyDistance = (direction * playerAttributes.MovementSpeed * Time.deltaTime).magnitude;
-            GameControl.Instance.AddFlyDistance(flyDistance);
-
+            Vector3 previousPosition = transform.position;
             transform.Translate(direction * playerAttributes.MovementSpeed * Time.deltaTime);
+            
 
             TiltFlySaucer();
 
@@ -214,8 +291,14 @@ public class PlayerBehavior : MonoBehaviour
             
             yield return null;
 
+            Vector3 currentPosition = transform.position;
+            flyingDistance = Vector3.Distance(currentPosition, previousPosition);
+            if (GameControl.Instance != null && flyingDistance >= flyingDistanceThreshold)
+            {     
+                GameControl.Instance.AddFlyDistance(flyingDistance);
+            }
+
         }
-        
         StartCoroutine("SmoothBreak");
         StartCoroutine("SmoothTilt");
         
@@ -238,7 +321,18 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (direction != Vector3.zero)
         {
-            turretTransform.rotation = Quaternion.LookRotation(-direction);
+            //turretTransform.rotation = Quaternion.LookRotation(-direction);
+            Vector3 turretLookRotation = new Vector3(-direction.x, turretTiltAmount , -direction.z);
+            turretTransform.rotation = Quaternion.LookRotation(turretLookRotation);
+        }
+    }
+
+    void TurretTiltBack() 
+    {
+        if (direction != Vector3.zero)
+        {
+            Vector3 turretLookRotation = new Vector3(-direction.x, 0, -direction.z);
+            turretTransform.rotation = Quaternion.LookRotation(turretLookRotation);
         }
     }
 
@@ -257,10 +351,11 @@ public class PlayerBehavior : MonoBehaviour
             transform.position = Vector3.Lerp(fromPos, toPos, t);
 
             yield return null;
+            if (move) break;
         }
 
         StartCoroutine("ResetRigidbody");
-        turret.Stop();
+        
     }
 
     IEnumerator SmoothTilt()
@@ -269,11 +364,17 @@ public class PlayerBehavior : MonoBehaviour
         {
             Quaternion target = Quaternion.Euler(Vector3.zero);
             model.rotation = Quaternion.Slerp(model.rotation, target, Time.deltaTime * tiltSpeed);
+
+            TurretTiltBack();
+
             yield return null;
+            if (move) break;
         }
     }
     public void OnTriggerEnter(Collider other)
     {
+        if (locked) return;
+
         if(other.tag == "Cow")
         {
             cowsInRay.Add(other.gameObject);
@@ -281,12 +382,13 @@ public class PlayerBehavior : MonoBehaviour
             StartCoroutine("GrabbingCow");
         }
     }
+
     public void OnTriggerExit(Collider other)
     {
         if (other.tag == "Cow")
         {
             cowsInRay.Remove(other.gameObject);
-            if(cowsInRay.Count <= 0)
+            if (cowsInRay.Count <= 0)
             {
                 SetRay(false);
             }
@@ -316,30 +418,55 @@ public class PlayerBehavior : MonoBehaviour
 
     IEnumerator GrabbingCow()
     {
-        
-        yield return new WaitForSeconds(0.5f);
+        int rayMultiplier = playerAttributes.RayMultiplier;
+        int maxCowsToGrab = 0;
+        if (cowsInRay.Count >= rayMultiplier)
+        {
+            maxCowsToGrab = rayMultiplier;
+        }
+        else
+        {
+            maxCowsToGrab = cowsInRay.Count;
+        }
 
         while (cowsInRay.Count > 0)
         {
-            yield return new WaitForSeconds(grabRate);
-            if (!move)
+            for (int i = 0; i < maxCowsToGrab; i++)
             {
-                var raytractorEmission = rayObjectTractor.emission;
-                raytractorEmission.enabled = true;
-                yield return new WaitForSeconds(0.8f);
-
-                foreach (GameObject c in cowsInRay)
+                if(cowsInRay.Count > i)
                 {
-                    
+                    GameObject cow = cowsInRay[i];
                     grab = true;
-                    //GameObject cow = cowsInRay[i];
-                    //Rigidbody cowRb = c.GetComponent<Rigidbody>();
-                    //cowRb.AddForce((grabPoint.position - c.transform.position).normalized * playerAttributes.RayForce);
-                    c.GetComponent<CowBehavior>().OnGrabbed(this);
-                    
+                    cow.GetComponent<CowBehavior>().OnGrabbed(this);                    
                 }
+                
+
             }
+            yield return new WaitForSeconds(grabRate);
+            //if (!move || instantGrab)
+            //{
+                
+            //    if(cowsInRay.Count > 0)
+            //    {
+                    
+                    
+                    
+
+            //    }
+            //}
         }
+    }
+
+    void TurnOnRayTractor()
+    {
+        var raytractorEmission = rayObjectTractor.emission;
+        raytractorEmission.enabled = true;
+    }
+
+    void TurnOffRayTractor()
+    {
+        var raytractorEmission = rayObjectTractor.emission;
+        raytractorEmission.enabled = false;
     }
 
     public void OnCollisionExit(Collision collision)
@@ -371,6 +498,8 @@ public class PlayerBehavior : MonoBehaviour
         if (b)
         {
             rayObjectBase.Play();
+            TurnOnRayTractor();
+            flyingSaucerAudio.PlayRay();
             //rayObjectRays.Play();
 
 
@@ -379,16 +508,24 @@ public class PlayerBehavior : MonoBehaviour
         {
             rayObjectBase.Stop();
             //rayObjectRays.Stop();
-
+            TurnOffRayTractor();
+            flyingSaucerAudio.StopRay();
         }
 
-        var raytractorEmission = rayObjectTractor.emission;
-        raytractorEmission.enabled = false;
+        
     }
     
     public void StartGrabAnimation()
     {
-        animator.SetBool("grab", true);
+        if(!animator.GetBool("grab"))
+        {
+            animator.SetBool("grab", true);            
+        }
+        flyingSaucerAudio.PlayGrab();
+    }
+    public void FinishGrabAnimation()
+    { 
+        animator.SetBool("grab", false);  
     }
 
     public void GetCow(GameObject cow)
@@ -399,6 +536,7 @@ public class PlayerBehavior : MonoBehaviour
 
         //GameControl.Instance.AddCoins(cow.GetComponent<CowBehavior>());
         if (GameControl.Instance != null) GameControl.Instance.AddCoins(cow.GetComponent<CowBehavior>());
+        PlayPickUpReward(cow);
         cowsInRay.Remove(cow);
         if (cowsInRay.Count <= 0)
         {
@@ -409,12 +547,22 @@ public class PlayerBehavior : MonoBehaviour
     }
     public void RayRadius()
     {
-        Debug.Log("Button Pressed");
+        //Debug.Log("Button Pressed");
     }
 
-
-    public void FinishGrabAnimation()
+    void PlayPickUpReward(GameObject cow)
     {
-        animator.SetBool("grab", false);
+        CowBehavior thisCow = cow.GetComponent<CowBehavior>();
+        int xpValue = thisCow.GetExperience();
+        int coinValue = thisCow.GetReward();
+        GameObject coinObject = Instantiate(coinsPickUpPrefab, coinsPosition);
+        GameObject xpObject = Instantiate(experiencePickUpPrefab, experiencePosition);
+
+        coinObject.GetComponent<PickUpUI>().Setup(coinValue);
+        xpObject.GetComponent<PickUpUI>().Setup(xpValue);
+        flyingSaucerAudio.PlayReward();
     }
+
+
+    
 }

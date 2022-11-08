@@ -47,6 +47,6 @@ MonoBehaviour:
   - {fileID: 7924381965852854766, guid: da842b515704ca2488d512ad07b41d75, type: 3}
   - {fileID: 5100517349009839578, guid: 682d5e3804c913941a4301c501394b3d, type: 3}
   - {fileID: 5936683710513958363, guid: 0379d17a696190447a7774b0e5d7e3ac, type: 3}
-  - {fileID: 2551722516582181071, guid: aaac83fb3a9d526419155cde8b2d2dc5, type: 3}
-  distanceLimits: {x: 15, y: 20}
+  loadedCowPrefabs: []
+  distanceLimits: {x: 15, y: 15}
   maxCows: 10

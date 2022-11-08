@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CowSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject[] cowPrefabs;
+    [SerializeField] private CowData[] cowPrefabs;
+    [SerializeField] private List<CowData> loadedCows;
     [SerializeField] private Vector2 distanceLimits;
     [SerializeField] private int maxCows;
 
@@ -13,6 +14,17 @@ public class CowSpawner : MonoBehaviour
 
     public void Initialize(int numCows)
     {
+        if(GameControl.Instance != null)
+        {
+            loadedCows = GameControl.Instance.PurchasedCows();
+        }
+        else
+        {
+            foreach(CowData cow in cowPrefabs)
+            {
+                loadedCows.Add(cow);
+            }
+        }
         maxCows = numCows;
         StartCoroutine(DelayInstantiateCows());
     }
@@ -25,10 +37,12 @@ public class CowSpawner : MonoBehaviour
 
     private void InstantiateCows()
     {
+        
         for(int i = 0; i < maxCows; i++)
         {
             Vector3 position = GetDestinationPoint();
-            Instantiate(cowPrefabs[Random.Range(0, cowPrefabs.Length)], position, Quaternion.identity);
+            //Instantiate(cowPrefabs[Random.Range(0, cowPrefabs.Length)], position, Quaternion.identity);
+            Instantiate(loadedCows[Random.Range(0, loadedCows.Count)].gamePrefab, position, Quaternion.identity);
         }
     }
 

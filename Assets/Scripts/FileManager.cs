@@ -9,7 +9,7 @@ using System;
 public class FileManager 
 {
     string filePathStandAlone = "Resource";
-    string fileName = "./appData2.db";
+    string fileName = "/appData.db";
 
    
 
@@ -59,12 +59,14 @@ public class FileManager
         }
         // Prepara a estrutura de dados no app
         PlayerData playerData = GameControl.Instance.playerData;
+        
         if (file.Length != 0)
-            playerData = (PlayerData)bf.Deserialize(file);
+            //playerData = (PlayerData)bf.Deserialize(file);
+            playerData = bf.Deserialize(file) as PlayerData;
 
         file.Close();
 
-
+        
         PreparaDadosCarregamento(playerData);
     }
 
@@ -89,12 +91,12 @@ public class FileManager
         playerData.playerSpeed = GameControl.Instance.playerData.playerSpeed;
         playerData.playerEnergy = GameControl.Instance.playerData.playerEnergy;
         playerData.playerEnergyConsume = GameControl.Instance.playerData.playerEnergyConsume;
-        playerData.currentPoints = GameControl.Instance.playerData.currentPoints;
-        playerData.totalPoints = GameControl.Instance.playerData.totalPoints;
-        playerData.numCow01 = GameControl.Instance.playerData.numCow01;
-        playerData.numCow02 = GameControl.Instance.playerData.numCow02;
-        playerData.numCow03 = GameControl.Instance.playerData.numCow03;
-        playerData.numCow04 = GameControl.Instance.playerData.numCow04;
+        playerData.currentCoins = GameControl.Instance.playerData.currentCoins;
+        playerData.totalCoins = GameControl.Instance.playerData.totalCoins;
+        //playerData.numCow01 = GameControl.Instance.playerData.numCow01;
+        //playerData.numCow02 = GameControl.Instance.playerData.numCow02;
+        //playerData.numCow03 = GameControl.Instance.playerData.numCow03;
+        //playerData.numCow04 = GameControl.Instance.playerData.numCow04;
         playerData.level = GameControl.Instance.playerData.level;
         playerData.language = GameControl.Instance.playerData.language;
         // Update 01/10/2022 - Ivo Seitenfus
@@ -102,10 +104,20 @@ public class FileManager
         playerData.lastSaved = GameControl.Instance.playerData.lastSaved;
         playerData.timePlayed = GameControl.Instance.playerData.timePlayed;
         playerData.flyDistance = GameControl.Instance.playerData.flyDistance;
-
+        // Update 15/10/2022 - Ivo Seitenfus
+        playerData.experience = GameControl.Instance.playerData.experience;
+        playerData.numCows = GameControl.Instance.playerData.numCows;
+        // Update 17/10/2022 - Ivo Seitenfus
+        playerData.purchasedCows = GameControl.Instance.playerData.purchasedCows;
+        //Update 21/10/2022 - Ivo Seitenfus
+        playerData.purchasedFlyingSaucerModels = GameControl.Instance.playerData.purchasedFlyingSaucerModels;
+        playerData.flyingSaucerModelId = GameControl.Instance.playerData.flyingSaucerModelId;
+        // Update 26/10/2022 - Ivo Seitenfus
+        playerData.tutorials = GameControl.Instance.playerData.tutorials;
+        // Update 04/11/2022 - Ivo Seitenfus
+        playerData.purchasedStages = GameControl.Instance.playerData.purchasedStages;
 
         //appData.name = Core.Instance.currentProjectName;
-
 
         return playerData;
     }
@@ -118,12 +130,12 @@ public class FileManager
         GameControl.Instance.playerData.playerSpeed = playerData.playerSpeed;
         GameControl.Instance.playerData.playerEnergy = playerData.playerEnergy;
         GameControl.Instance.playerData.playerEnergyConsume = playerData.playerEnergyConsume;
-        GameControl.Instance.playerData.currentPoints = playerData.currentPoints;
-        GameControl.Instance.playerData.totalPoints = playerData.totalPoints;
-        GameControl.Instance.playerData.numCow01 = playerData.numCow01;
-        GameControl.Instance.playerData.numCow02 = playerData.numCow02;
-        GameControl.Instance.playerData.numCow03 = playerData.numCow03;
-        GameControl.Instance.playerData.numCow04 = playerData.numCow04;
+        GameControl.Instance.playerData.currentCoins = playerData.currentCoins;
+        GameControl.Instance.playerData.totalCoins = playerData.totalCoins;
+        //GameControl.Instance.playerData.numCow01 = playerData.numCow01;
+        //GameControl.Instance.playerData.numCow02 = playerData.numCow02;
+        //GameControl.Instance.playerData.numCow03 = playerData.numCow03;
+        //GameControl.Instance.playerData.numCow04 = playerData.numCow04;
         GameControl.Instance.playerData.level = playerData.level;
         GameControl.Instance.playerData.language = playerData.language;
         // Update 01/10/2022 - Ivo Seitenfus
@@ -131,7 +143,62 @@ public class FileManager
         GameControl.Instance.playerData.lastSaved = playerData.lastSaved;
         GameControl.Instance.playerData.timePlayed = playerData.timePlayed;
         GameControl.Instance.playerData.flyDistance = playerData.flyDistance;
+        // Update 15/10/2022 - Ivo Seitenfus
+        GameControl.Instance.playerData.experience = playerData.experience;
+        for(int i = 0; i < playerData.numCows.Count; i++)
+        {
+            GameControl.Instance.playerData.numCows[i] = playerData.numCows[i];
+        }
 
+        // Update 17/10/2022 - Ivo Seitenfus
+        if (playerData.purchasedCows != null && playerData.purchasedCows.Count > 0)
+        {
+            for (int i = 0; i < playerData.purchasedCows.Count; i++)
+            {
+                //GameControl.Instance.playerData.unlockedCows[i] = playerData.unlockedCows[i];
+                GameControl.Instance.playerData.purchasedCows.Add(playerData.purchasedCows[i]);
+            }
+        }
+        else
+        {
+            GameControl.Instance.playerData.purchasedCows.Add(0);
+        }
+
+        //Update 21/10/2022 - Ivo Seitenfus
+        if (playerData.purchasedFlyingSaucerModels != null && playerData.purchasedFlyingSaucerModels.Count > 0)
+        {
+            for (int i = 0; i < playerData.purchasedFlyingSaucerModels.Count; i++)
+            {
+                GameControl.Instance.playerData.purchasedFlyingSaucerModels.Add(playerData.purchasedFlyingSaucerModels[i]);
+            }
+        }
+        else
+        {
+            GameControl.Instance.playerData.purchasedFlyingSaucerModels.Add(0);
+            GameControl.Instance.playerData.purchasedFlyingSaucerModels.Add(1);
+            GameControl.Instance.playerData.purchasedFlyingSaucerModels.Add(2);
+            GameControl.Instance.playerData.purchasedFlyingSaucerModels.Add(3);
+        }
+
+        GameControl.Instance.playerData.flyingSaucerModelId = playerData.flyingSaucerModelId;
+        // Update 26/10/2022 - Ivo Seitenfus
+        for (int i = 0; i < playerData.tutorials.Count; i++)
+        {
+            GameControl.Instance.playerData.tutorials[i] = playerData.tutorials[i];
+        }
+        // Update 04/11/2022 - Ivo Seitenfus
+        if(playerData.purchasedStages != null && playerData.purchasedStages.Count > 0)
+        {
+            for(int i = 0; i < playerData.purchasedStages.Count; i++)
+            {
+                GameControl.Instance.playerData.purchasedStages.Add(playerData.purchasedStages[i]);
+            }
+        }
+        else
+        {
+            GameControl.Instance.playerData.purchasedStages.Add(0);
+            GameControl.Instance.playerData.purchasedStages.Add(1);
+        }
     }
 
     public void VerifySavedFiles()

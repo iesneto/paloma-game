@@ -6,13 +6,37 @@ public class Audio : MonoBehaviour
 {
     [SerializeField] private AudioListener listener;
     [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource menuSelect;
+    [SerializeField] private AudioSource menuChoose;
     [SerializeField] private AudioClip titleScreenClip;
     [SerializeField] private AudioClip dockStationClip;
     [SerializeField] private AudioClip[] stageClips;
     [SerializeField] private AudioClip addCoins;
     [SerializeField] private AudioClip addCow;
+    
+
     public float MusicVolume { get; set; }
     public float SFXVolume { get; set; }
+
+    public void DisableSFX()
+    {
+
+    }
+
+    public void DisableMusic()
+    {
+
+    }
+
+    public void EnableSFX()
+    {
+
+    }
+
+    public void EnableMusic()
+    {
+
+    }
 
     public void EnableMainMenuMusic()
     {

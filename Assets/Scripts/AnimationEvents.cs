@@ -26,6 +26,21 @@ public class AnimationEvents : MonoBehaviour
     {
         parent.GetComponent<PlayerBehavior>().FinishGrabAnimation();
     }
+
+    public void CloseWindow()
+    {
+        parent.GetComponent<UIManager>().DisableLeaveStage();
+    }
+
+    public void CloseTutorialWindow()
+    {
+        parent.GetComponent<Tutorial>().OnPointerEnter();
+    }
+
+    public void CloseMainMenuWindow()
+    {
+        parent.GetComponent<MainMenu>().FinishCloseWindow();
+    }
     
 
 }

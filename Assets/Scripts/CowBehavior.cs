@@ -10,7 +10,7 @@ public class CowBehavior : MonoBehaviour
     private bool grabbed;
     private Rigidbody rb;
     private Animator anim;
-    private float walkChance;
+    [SerializeField] private float walkChance;
     private bool walk;
     private float timeIdle;
     private bool idle;
@@ -24,6 +24,10 @@ public class CowBehavior : MonoBehaviour
     //private bool grounded;
     public float destinyDistance;
     private PlayerBehavior player;
+    private bool pull;
+    private float pullSpeed;
+    [SerializeField] private float idleTimeMin;
+    [SerializeField] private float idleTimeMax;
 
 
     private void Start()
@@ -31,7 +35,7 @@ public class CowBehavior : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
-        walkChance = 0.8f;
+
         rb.mass = cowData.mass;
         movementSpeed = cowData.movementSpeed;
         rotationSpeed = movementSpeed;
@@ -93,7 +97,7 @@ public class CowBehavior : MonoBehaviour
                 }
 
             }
-            timeIdle = Random.Range(10f, 12f);
+            timeIdle = Random.Range(idleTimeMin, idleTimeMax);
             yield return new WaitForSeconds(timeIdle);
         }
         //yield return null;
@@ -125,8 +129,12 @@ public class CowBehavior : MonoBehaviour
             direction = new Vector3(dirDiff.x, 0, dirDiff.z);
             // Rotate the cube by converting the angles into a quaternion.
             //Quaternion targetRotation = Quaternion.LookRotation(direction);
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            gameObject.transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed);
+            if(direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                gameObject.transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed);
+            }
+            
             // Dampen towards the target rotation
             //gameObject.transform.rotation = Quaternion.Slerp(gameObject.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
             // gameObject.transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
@@ -170,7 +178,7 @@ public class CowBehavior : MonoBehaviour
             //Vector3 bias = sight.transform.right * calculo;
             //Vector3 direction = forward + bias;
             Ray ray = new Ray(transform.position, direction);
-            Debug.DrawRay(transform.position, dest - transform.position, Color.blue, 5);
+            //Debug.DrawRay(transform.position, dest - transform.position, Color.blue, 5);
             if (!Physics.Raycast(ray, out hit, sightDistance))
             {
 
@@ -248,6 +256,7 @@ public class CowBehavior : MonoBehaviour
 
     public void OnGrabbed(PlayerBehavior _player)
     {
+        
         if (!grabbed)
         {
 
@@ -264,8 +273,31 @@ public class CowBehavior : MonoBehaviour
             anim.SetBool("walk", false);
             anim.SetBool("grab", true);
             player = _player;
+            StartCoroutine("PullCowToPlayer");
+            
         }
 
+    }
+
+    IEnumerator PullCowToPlayer()
+    {
+        
+        if (player == null) yield break;
+        pull = true;
+
+        while (pull)
+        {
+            pullSpeed = player.GetComponent<PlayerAttributes>().MovementSpeed;
+            Vector3 playerPosition = player.transform.position;
+            Vector3 dirDiff = (playerPosition - transform.position).normalized;
+            Vector3 direction = new Vector3(dirDiff.x, 0, dirDiff.z);
+            transform.position += (direction * pullSpeed * Time.deltaTime);
+            yield return null;
+        }
+        
+
+
+            
     }
 
     public void StartPlayerGrabAnimation()
@@ -302,10 +334,16 @@ public class CowBehavior : MonoBehaviour
         return cowData.reward;
     }
 
+    public int GetExperience()
+    {
+        return cowData.xp;
+    }
+
     public void OnGrab()
     {
         if(player != null)
         {
+            pull = false;
             player.GetCow(this.gameObject);
         }
 
