@@ -7,6 +7,8 @@ public class PlayerAttributes : MonoBehaviour
     [SerializeField] private CapsuleCollider rayCollider;
     [SerializeField] private float movementSpeedProperty;
     [SerializeField] private GameObject rayModel;
+    [SerializeField] private ParticleSystem rayRing;
+    [SerializeField] private ParticleSystem rayTractor;
     public float MovementSpeed
     {
         get { return movementSpeedProperty; }
@@ -69,7 +71,7 @@ public class PlayerAttributes : MonoBehaviour
     public void InitializeAttributes()
     {
         rayCollider = GetComponent<CapsuleCollider>();
-        rayModel = transform.Find("Raio").gameObject;
+        //rayModel = transform.Find("Raio").gameObject;
         if (GameControl.Instance == null)
         {
             //Inicializa atributos 
@@ -77,6 +79,10 @@ public class PlayerAttributes : MonoBehaviour
             rayForceProperty = 120;
             rayColliderRadiusProperty = 2;
             rayModelScaleProperty = new Vector3(1, 1, 1);
+            var mainRayRing = rayRing.main;
+            mainRayRing.startSize = 4f;
+            var mainRayTractor = rayTractor.main;
+            mainRayTractor.startSize = 4f;
             rayModel.transform.localScale = RayModelScale;
             rayColliderHeightProperty = 14;
             rayColliderCenterYProperty = -RayColliderHeight / 2;
@@ -111,6 +117,11 @@ public class PlayerAttributes : MonoBehaviour
             rayCollider.height = RayColliderHeight;
             Vector3 newCenter = new Vector3(0, RayColliderCenterY, 0);
             rayCollider.center = newCenter;
+
+            var mainRayRing = rayRing.main;
+            mainRayRing.startSize = 4f + (float)control.playerData.rayRadius;
+            var mainRayTractor = rayTractor.main;
+            mainRayTractor.startSize = 4f + (float)control.playerData.rayRadius;
         }
     }
 }

@@ -519,10 +519,13 @@ public class PlayerBehavior : MonoBehaviour
     {
         if(!animator.GetBool("grab"))
         {
-            animator.SetBool("grab", true);            
+            animator.SetBool("grab", true);
+            Invoke("FinishGrabAnimation", 0.35f);
         }
         flyingSaucerAudio.PlayGrab();
     }
+
+    
     public void FinishGrabAnimation()
     { 
         animator.SetBool("grab", false);  

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: disco12
   m_EditorClassIdentifier: 
   id: 12
-  value: 500
-  levelToUnlock: 6
+  value: 2000
+  levelToUnlock: 7
   icon: {fileID: 21300000, guid: 0a6a50a26440e2a4c970678daf4bb96b, type: 3}
   model: {fileID: 7021849156242837296, guid: 959d4d06b2f537d409b566036e1e8bff, type: 3}

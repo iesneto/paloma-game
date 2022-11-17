@@ -29,7 +29,7 @@ public class AnimationEvents : MonoBehaviour
 
     public void CloseWindow()
     {
-        parent.GetComponent<UIManager>().DisableLeaveStage();
+        parent.GetComponent<UIManager>().DisableOpenedWindow();
     }
 
     public void CloseTutorialWindow()

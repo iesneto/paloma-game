@@ -36,8 +36,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject flyingSaucerListContentView;
     private FlyingSaucerMenuItem currentItem;
     private CowMenuItem currentCow;
-    private bool buildedCowsArea = false;
+    private StageMenuItem currentStage;
+    private bool buildedContentAreas = false;
     private GameObject windowOpen;
+    private bool levelUp;
 
     [System.Serializable]
     private struct WindowFlyingSaucer
@@ -88,6 +90,35 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private WindowCow windowCow;
 
 
+    [System.Serializable]
+    private struct StagesArea
+    {
+        public GameObject stageItemPrefab;
+        public GameObject contentArea;
+    }
+    [SerializeField] private StagesArea stagesArea;
+
+    [System.Serializable]
+    private struct WindowStage
+    {
+        public GameObject window;
+        public Animator windowAnimator;
+        public Image stageImage;
+        public TextMeshProUGUI stageName;
+        public GameObject lockedImage;
+        public TextMeshProUGUI lockedLevelText;
+        public GameObject itemPrice;
+        public GameObject itemPriceMask;
+        public TextMeshProUGUI itemPriceText;
+        public GameObject itemMask;
+        public GameObject itemPriceButton;
+        public GameObject popDownPrice;
+        public TextMeshProUGUI popDownPriceText;
+        public GameObject playButton;
+        public GameObject adsImage;
+    }
+    [SerializeField] private WindowStage windowStage;
+
     //private void StartMenuUI()
     //{
     //    //GameControl.Instance.SetupMainMenu(this);
@@ -109,12 +140,14 @@ public class MainMenu : MonoBehaviour
         PlayMenuPanel.SetActive(true);
         windowFlyingSaucer.window.SetActive(false);
         windowCow.window.SetActive(false);
+        windowStage.window.SetActive(false);
         PlayMenuPanel_Coins.SetText(GameControl.Instance.playerData.currentCoins.ToString());
         LoadAndDisplayFlyingSaucer();
-        if (!buildedCowsArea) 
+        if (!buildedContentAreas) 
         {
-            buildedCowsArea = true;
+            buildedContentAreas = true;
             BuildCowArea();
+            BuildStagesArea();
         }
         
         //Update 28/10/2022 - Ivo Seitenfus
@@ -428,7 +461,19 @@ public class MainMenu : MonoBehaviour
         for (int i = 0; i < GameControl.Instance.cowsNumber(); i++)
         {
             CowMenuItem cowItem = Instantiate(cowsArea.cowItemPrefab, cowsArea.contentArea.transform).GetComponent<CowMenuItem>();
-            cowItem.InitalizeItem(i, this);            
+            //cowItem.InitalizeItem(i, this);            
+            cowItem.InitalizeItem(CowAreaSelectItem, i);
+
+        }
+    }
+
+    void BuildStagesArea()
+    {
+        for (int i = 0; i < GameControl.Instance.stagesNumber(); i++)
+        {
+            StageMenuItem stageItem = Instantiate(stagesArea.stageItemPrefab, stagesArea.contentArea.transform).GetComponent<StageMenuItem>();
+            //stageItem.InitalizeItem(i, this);
+            stageItem.InitalizeItem(StagesAreaSelectItem, i);
 
         }
     }
@@ -442,6 +487,14 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    public void UpdateStages()
+    {
+        for (int i = 0; i < stagesArea.contentArea.transform.childCount; i++)
+        {
+            StageMenuItem _stageItem = stagesArea.contentArea.transform.GetChild(i).gameObject.GetComponent<StageMenuItem>();
+            _stageItem.UpdateStage(i);
+        }
+    }
 
 
     public void ShowModalPurchase(Upgrade _upgrade)
@@ -510,6 +563,99 @@ public class MainMenu : MonoBehaviour
     {
         windowCow.windowAnimator.SetBool("Open", false);
         Destroy(windowCow.cowModelLocation.transform.GetChild(0).gameObject, 1f);
+    }
+
+
+    public void StagesAreaSelectItem(StageMenuItem _stage)
+    {
+        currentStage = _stage;
+        windowOpen = windowStage.window;
+        windowOpen.SetActive(true);
+        windowStage.windowAnimator.SetBool("Open", true);
+        StageData m_stage = currentStage.ItemStageData();        
+        BuildStageWindow(m_stage);
+    }
+
+    void BuildStageWindow(StageData _stage)
+    {
+        windowStage.itemPrice.SetActive(false);
+        windowStage.popDownPrice.SetActive(false);
+        windowStage.lockedImage.SetActive(false);
+        windowStage.itemPriceMask.SetActive(true);
+        windowStage.playButton.SetActive(false);
+        windowStage.stageImage.sprite = _stage.image;
+        windowStage.stageName.SetText("Cenário " + _stage.nameID);
+
+        if (!GameControl.Instance.IsStageUnlocked(_stage.id))
+        {
+            windowStage.lockedImage.SetActive(true);
+            windowStage.lockedLevelText.SetText("Level " + _stage.levelToUnlock);
+        }
+        else
+        {
+            if (!GameControl.Instance.playerData.purchasedStages.Contains(_stage.id) /* && (itemData.value != 0)*/)
+            {
+                windowStage.itemPrice.SetActive(true);
+                windowStage.itemPriceText.SetText(_stage.value.ToString());
+                if (GameControl.Instance.playerData.currentCoins >= _stage.value)
+                {
+                    windowStage.itemPriceMask.SetActive(false);
+                }
+
+            }
+            else
+            {
+                windowStage.playButton.SetActive(true);
+            }
+        }
+    }
+
+    public void CloseStageWindow()
+    {
+        windowStage.windowAnimator.SetBool("Open", false);
+    }
+
+    public void PurchaseStage()
+    {
+        GameControl.Instance.PurchaseStage(currentStage.Id);
+        StartCoroutine("PlayPurchaseStageAnimation");
+    }
+
+    IEnumerator PlayPurchaseStageAnimation()
+    {
+        windowStage.itemMask.GetComponent<Animation>().Play();
+        windowStage.itemPriceButton.GetComponent<Animation>().Play();
+        windowStage.popDownPrice.SetActive(true);
+        windowStage.popDownPrice.GetComponent<Animation>().Play();
+        windowStage.popDownPriceText.SetText(currentStage.ItemStageData().value.ToString());
+        yield return new WaitForSeconds(1.5f);
+        windowStage.itemPrice.SetActive(false);
+        windowStage.popDownPrice.SetActive(false);
+        windowStage.itemMask.GetComponent<Animation>().Rewind();
+        windowStage.itemMask.GetComponent<Animation>().Play();
+        windowStage.itemMask.GetComponent<Animation>().Sample();
+        windowStage.itemMask.GetComponent<Animation>().Stop();
+        windowStage.itemPriceButton.GetComponent<Animation>().Rewind();
+        windowStage.itemPriceButton.GetComponent<Animation>().Play();
+        windowStage.itemPriceButton.GetComponent<Animation>().Sample();
+        windowStage.itemPriceButton.GetComponent<Animation>().Stop();
+        windowStage.popDownPrice.GetComponent<Animation>().Rewind();
+        windowStage.popDownPrice.GetComponent<Animation>().Play();
+        windowStage.popDownPrice.GetComponent<Animation>().Sample();
+        windowStage.popDownPrice.GetComponent<Animation>().Stop();
+        windowStage.playButton.SetActive(true);
+        windowStage.playButton.GetComponent<Animation>().Rewind();
+        windowStage.playButton.GetComponent<Animation>().Play();
+    }
+
+    public void LevelUp()
+    {
+        levelUp = true;
+    }
+
+    public int CurrentStage()
+    {
+        return currentStage.Id;
     }
 
 }

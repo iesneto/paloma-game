@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class SceneController : MonoBehaviour
 {
-    [System.Serializable] 
-    private struct ScenesForPlayerLevel
-    {
-        public int[] scenesReferences;
-    }
-    [SerializeField] private ScenesForPlayerLevel[] scenesForPlayerLevel;
+    //[System.Serializable] 
+    //private struct ScenesForPlayerLevel
+    //{
+    //    public int[] scenesReferences;
+    //}
+    //[SerializeField] private ScenesForPlayerLevel[] scenesForPlayerLevel;
 
     [SerializeField] private GameObject PlayerPrefab;
     [SerializeField] private Transform playerStartLocation;
@@ -43,12 +43,23 @@ public class SceneController : MonoBehaviour
         }
     }
 
+    public void LoadLevel(int _scene)
+    {
+        int _sceneBuildID = GameControl.Instance.SceneBuildIndex(_scene);
+        GameControl.Instance.SetStage(_scene);
+        StartCoroutine(LoadSceneAsync(_sceneBuildID));
+    }
     public void LoadRandomLevel()
     {
         //int scn = Random.Range(numberOfScenes.x, numberOfScenes.y + 1);
-        int scn = Random.Range(outGameScenes, outGameScenes + inGameScenes);
+        //int scn = Random.Range(outGameScenes, outGameScenes + inGameScenes);
+        List<int> stages = GameControl.Instance.StagesPurchased();
+        int stageIndex = Random.Range(0, stages.Count);
+        int _scene = stages[stageIndex];
+        int _sceneBuildID = GameControl.Instance.SceneBuildIndex(_scene);
+        GameControl.Instance.SetStage(_scene);
         
-        StartCoroutine(LoadSceneAsync(scn));
+        StartCoroutine(LoadSceneAsync(_sceneBuildID));
     }
 
     public void LoadMainMenu()
@@ -108,8 +119,9 @@ public class SceneController : MonoBehaviour
         GameObject player = Instantiate(PlayerPrefab, playerStartLocation.position, Quaternion.identity);
         GameObject cam = Instantiate(CameraPrefab, playerStartLocation.position, Quaternion.identity);
         cam.GetComponent<CameraFollow>().SetPlayer(player);
+        GameControl.Instance.SetPlayer(player);
         int playerLevel = GameControl.Instance.playerData.level;
-        int cowsPerSpawner = (playerLevel * sceneCowMultiplier);
+        int cowsPerSpawner = sceneCowMultiplier + (playerLevel / sceneCowMultiplier);
         sceneTotalCows = cowsPerSpawner * spawners.Length;
         GameControl.Instance.SceneTotalCows = sceneTotalCows;
 

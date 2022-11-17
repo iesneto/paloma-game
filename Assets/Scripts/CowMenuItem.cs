@@ -10,9 +10,9 @@ public class CowMenuItem : MonoBehaviour, IPointerDownHandler, IPointerClickHand
 
     public int Id { get; set; }
     [SerializeField] private RectTransform myTransform;
-    [SerializeField] private Image itemFrame;
-    [SerializeField] private Sprite itemSelected;
-    [SerializeField] private Sprite itemDeselected;
+    //[SerializeField] private Image itemFrame;
+    //[SerializeField] private Sprite itemSelected;
+    //[SerializeField] private Sprite itemDeselected;
     [SerializeField] private Color selected;
     [SerializeField] private Color deselected;
     [SerializeField] private Image itemIcon;
@@ -21,20 +21,24 @@ public class CowMenuItem : MonoBehaviour, IPointerDownHandler, IPointerClickHand
     [SerializeField] private GameObject lockedImage;
     [SerializeField] private TextMeshProUGUI lockedLevelText;
     [SerializeField] private TextMeshProUGUI colectedNumberText;
-    private MainMenu mainMenuReference;
+    //private MainMenu mainMenuReference;
     CowData cow;
     private float currentScale = 1f;
     private float maxScale = 1f;
-    private float minScale = 0.3f;
+    private float minScale = 0.5f;
     private float scaleSpeed = 4f;
     private bool up, down, exit;
+    public delegate void cowDelegate(CowMenuItem cow);
+    private cowDelegate m_delegate;
 
-    public void InitalizeItem(int index, MainMenu reference)
+    //public void InitalizeItem(cowDelegate _method, int index, MainMenu reference)
+    public void InitalizeItem(cowDelegate _method, int index)
     {
-        mainMenuReference = reference;
+        m_delegate = _method;
+        //mainMenuReference = reference;
         Id = index;
-        itemFrame.sprite = itemDeselected;
-        itemFrame.color = deselected;
+        //itemFrame.sprite = itemDeselected;
+        //itemFrame.color = deselected;
         cow = GameControl.Instance.CowByIndex(index);
         itemIcon.sprite = cow.icon;
         UpdateCow(Id);
@@ -97,7 +101,8 @@ public class CowMenuItem : MonoBehaviour, IPointerDownHandler, IPointerClickHand
     {
         //itemFrame.sprite = itemSelected;
         //itemFrame.color = selected;
-        mainMenuReference.CowAreaSelectItem(this);
+        //mainMenuReference.CowAreaSelectItem(this);
+        m_delegate(this);
     }
 
     public void DeselectItem()

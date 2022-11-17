@@ -1,10 +1,11 @@
 using UnityEngine.EventSystems;
 using UnityEngine;
 
-public class PlayerStartMoving : MonoBehaviour, IPointerEnterHandler
+public class PlayerStartMoving : MonoBehaviour, IPointerDownHandler
 {
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
+        
         GameControl.Instance.StartMoving();
     }
 }

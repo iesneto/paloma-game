@@ -23,6 +23,7 @@ public class Tutorial : MonoBehaviour
     {
         if (!GameControl.Instance.playerData.tutorials[0])
         {
+            this.gameObject.SetActive(true);
             controllers.SetActive(true);         
             //skipButton.SetActive(true);
             GameControl.Instance.PauseGame();

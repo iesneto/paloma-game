@@ -7,7 +7,7 @@ using System;
 
 public class GameControl : MonoBehaviour
 {
-    
+
     
     [SerializeField] private bool startedPlaying;
     // [SerializeField] private MainMenu MainMenuObj;
@@ -18,16 +18,18 @@ public class GameControl : MonoBehaviour
     [SerializeField] private Audio audioManager;
     //[SerializeField] private List<GameObject> cowPrefabs;
     [SerializeField] private List<int> playerExperienceToLevelUp;
-    [SerializeField] private List<int> playerLevelToUnlockCows;
+    //[SerializeField] private List<int> playerLevelToUnlockCows;
     //[SerializeField] private List<int> playerLevelToUnlockFlysaucers;
     [SerializeField] private int sceneTotalCows;
     [SerializeField] private bool stagePlaying;
-    [SerializeField] private int stageClearedExperience;
+    //[SerializeField] private int stageClearedExperience;
     [SerializeField] private int tutorialsNumber;
     [SerializeField] private Tutorial tutorial;
     [SerializeField] private bool playerStartedMoving;
     [SerializeField] private List<FlyingSaucerData> flyingSaucers;
     [SerializeField] private List<CowData> cows;
+    [SerializeField] private List<StageData> stages;
+    [SerializeField] private int currentStage;
     //[SerializeField] private List<int> availableFlyingSaucersIds;
     
     private bool joystickChange;
@@ -35,6 +37,9 @@ public class GameControl : MonoBehaviour
     private int sceneBestTimeSeconds;
     private int currentMinutes;
     private int currentSeconds;
+    private int stageExtraXP;
+    private int stageTotalXP;
+    private int stageXP;
     private bool stageCleared;
 
     public int SceneTotalCows
@@ -125,6 +130,7 @@ public class GameControl : MonoBehaviour
     private void Awake()
     {
         
+        
         if (_instance != this && _instance != null)
         {
             
@@ -161,8 +167,8 @@ public class GameControl : MonoBehaviour
         }
     }
 
-
     
+
 
     public void StartPlaying()
     {
@@ -236,10 +242,22 @@ public class GameControl : MonoBehaviour
         }
     }
 
+    public void SetPlayer(GameObject _player)
+    {
+        player = _player;
+    }
+
+    public void SetStage(int stage)
+    {
+        currentStage = stage;
+        stageXP = stages[currentStage].xp;
+    }
+
+
     public void LevelLoaded()
     {
         CalculateStageTime();
-        player = GameObject.FindGameObjectWithTag("Player");
+        //player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<PlayerBehavior>().Lock();
         uiManager.InGameUIStart();
         audioManager.PlayStageMusic();
@@ -248,9 +266,14 @@ public class GameControl : MonoBehaviour
 
     void CalculateStageTime()
     {
-        int totalTime =  60 + (sceneTotalCows * 5 / playerData.level)  - (5 * playerData.level);
-        sceneBestTimeMinutes = totalTime / 60;
-        sceneBestTimeSeconds = totalTime % 60;
+        //int totalTime =  60 + (sceneTotalCows * 5 / playerData.level)  - (5 * playerData.level);
+        int totalTime = stages[currentStage].time;
+        float timeAmortizationByPlayerLevel = (totalTime * 5 * playerData.level)/100;
+        //Debug.Log("time amortization: " + timeAmortizationByPlayerLevel);
+        int stageTime = totalTime - (int)Mathf.Ceil(timeAmortizationByPlayerLevel);
+        
+        sceneBestTimeMinutes = stageTime / 60;
+        sceneBestTimeSeconds = stageTime % 60;
 
         string seconds = (sceneBestTimeSeconds < 10) ? "0" + sceneBestTimeSeconds.ToString() : sceneBestTimeSeconds.ToString();
         string minutes = sceneBestTimeMinutes.ToString();
@@ -302,17 +325,41 @@ public class GameControl : MonoBehaviour
 
     public void AddExperience(int xp)
     {
+        
         playerData.experience += xp;
         VerifyLevelUp();
     }
 
     void VerifyLevelUp()
     {
-        //TO DO: Revert LEVEL UP NERF
-        if (playerData.experience >= playerExperienceToLevelUp[playerData.level]/3)
+        
+        if (playerData.experience >= playerExperienceToLevelUp[playerData.level])
         {
             // TO DO:  Level Up magic
             playerData.level++;
+            uiManager.MainMenuLevelUp();
+            // stats upgrades: speed, rayradius, raymultiplier
+            switch (playerData.level)
+            {
+                case 2: playerData.playerSpeed += 1;
+                    break;
+                case 3: playerData.rayRadius += 1;
+                    break;
+                case 4: playerData.rayMultiplier += 1;
+                    break;
+                case 5: playerData.playerSpeed += 1;
+                    break;
+                case 6: playerData.rayRadius += 1;
+                    break;
+                case 7: playerData.rayMultiplier += 1;
+                    break;
+                case 8: playerData.playerSpeed += 1;
+                    break;
+                case 9: playerData.rayRadius += 1;
+                    break;
+                case 10: playerData.playerSpeed += 1;
+                    break;
+            }            
         }
         
         
@@ -349,7 +396,65 @@ public class GameControl : MonoBehaviour
     void StageState()
     {
         SceneCurrentCows++;
-        if (SceneCurrentCows == SceneTotalCows) stageCleared = true;
+        if (SceneCurrentCows == SceneTotalCows)
+        {
+            stageCleared = true;
+            StartCoroutine("FinishStageShowRewards");
+        }
+    }
+
+    IEnumerator FinishStageShowRewards()
+    {
+        int playerTime = currentMinutes * 60 + currentSeconds;
+        if(playerTime <= ((sceneBestTimeMinutes * 60) + sceneBestTimeSeconds))
+        {
+            stageExtraXP = stageXP / 2;            
+        }
+        else
+        {
+            stageExtraXP = 0;
+        }
+        
+        stageTotalXP = stageXP + stageExtraXP;        
+        yield return new WaitForSeconds(0.5f);        
+        AddExperience(stageTotalXP);
+        SaveData();
+        uiManager.InGameUISync();
+        uiManager.OpenStageCleared();
+    }
+
+    public int StageMinutes()
+    {
+        return sceneBestTimeMinutes;
+    }
+    public int StageSeconds()
+    {
+        return sceneBestTimeSeconds;
+    }
+
+    public int PlayerMinutes()
+    {
+        return currentMinutes;
+    }
+
+    public int PlayerSeconds()
+    {
+        return currentSeconds;
+    }
+
+    public int StageXP()
+    {
+        return stageXP;
+    }
+
+    public int StageExtraXP()
+    {
+        return stageExtraXP;
+    }
+
+    public int StageTotalXP()
+    {
+        return stageTotalXP;
     }
 
     public void PurchaseUpgrade(UpgradeData.ControlVar upgradeType, long value)
@@ -522,9 +627,47 @@ public class GameControl : MonoBehaviour
             uiManager.MainMenuSyncUI();
         }
     }
+
+    public List<int> StagesPurchased()
+    {
+        return playerData.purchasedStages;
+    }
+
+    public StageData StageDatabyIndex(int index)
+    {
+        return stages[index];
+    }
+
+    public int stagesNumber()
+    {
+        return stages.Count;
+    }
+
+    public int SceneBuildIndex(int _stage)
+    {
+        return stages[_stage].buildID;
+    }
+
+    public bool IsStageUnlocked(int index)
+    {
+        return (stages[index].levelToUnlock <= playerData.level);
+    }
+
+    public void PurchaseStage(int id)
+    {
+        
+        if (playerData.currentCoins >= stages[id].value)
+        {
+            playerData.currentCoins -= stages[id].value;
+            playerData.purchasedStages.Add(id);
+            SaveData();
+            uiManager.MainMenuSyncUI();
+        }
+        
+    }
     //public void OnChangeJoystick(Vector2 position)
     //{
-        
+
     //    //if((position.x <= 0.1f && position.x >= -0.1f) && (position.y <= 0.1f && position.y >= -0.1f))
     //    //{
     //    //    if (joystickChange)

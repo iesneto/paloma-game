@@ -13,6 +13,24 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float cowsBarFillRate;
 
     [System.Serializable]
+    private struct WindowClearStage
+    {
+        public GameObject stageTimeLabel;
+        public GameObject stageTimeValue;
+        public TextMeshProUGUI stageTimeValueText;        
+        public GameObject stageXPValue;
+        public TextMeshProUGUI stageXPValueText;
+        public GameObject playerTimeLabel;
+        public GameObject playerTimeValue;
+        public TextMeshProUGUI playerTimeValueText;
+        public GameObject extraXPValue;
+        public TextMeshProUGUI extraXPValueText;
+        public GameObject totalXPValue;
+        public TextMeshProUGUI totalXPValueText;
+        public GameObject okButton;
+    }
+
+    [System.Serializable]
     private struct InGameUI
     {
 
@@ -25,6 +43,8 @@ public class UIManager : MonoBehaviour
         public TextMeshProUGUI experienceValue;
         public Image experienceFillBar;
         public GameObject leaveStage;
+        public GameObject stageCleared;
+        public GameObject currentOpenedWindow;
         public TextMeshProUGUI currentTime;
         public TextMeshProUGUI bestTime;
         public Image playPauseButton;
@@ -34,6 +54,7 @@ public class UIManager : MonoBehaviour
         public Image pauseBackground;
         public GameObject playerStartedUI;
         public Animation playerStartedUIAnimation;
+        public WindowClearStage windowClearStage;
     }
     [SerializeField]private InGameUI inGameUI;
 
@@ -59,10 +80,17 @@ public class UIManager : MonoBehaviour
 
     #region GENERAL_METHODS
 
-    public void LoadLevel()
+    public void LoadRandomLevel()
     {
         GameControl.Instance.StartPlaying();
         GameControl.Instance.gameObject.GetComponent<SceneController>().LoadRandomLevel();
+    }
+    public void LoadLevel()
+    {
+        GameControl.Instance.StartPlaying();
+        StageData stage = GameControl.Instance.StageDatabyIndex(menuUI.mainMenuScript.CurrentStage());
+        
+        GameControl.Instance.gameObject.GetComponent<SceneController>().LoadLevel(stage.id);
     }
 
     #endregion
@@ -134,7 +162,7 @@ public class UIManager : MonoBehaviour
         inGameUI.coinsValue.SetText(GameControl.Instance.playerData.currentCoins.ToString());
         inGameUI.cowsNumber.SetText(GameControl.Instance.SceneCurrentCows + "/" + GameControl.Instance.SceneTotalCows);
         StartCoroutine("FillCowsBar");
-        inGameUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString());
+        inGameUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString() + "/" + GameControl.Instance.PlayerExperienceToLevelUp().ToString());
         inGameUI.levelValue.SetText(GameControl.Instance.playerData.level.ToString());
         inGameUI.experienceFillBar.fillAmount = ((float)(GameControl.Instance.playerData.experience - GameControl.Instance.PlayerStartExperienceOfLevel()) 
                                                 / (float)(GameControl.Instance.PlayerExperienceToLevelUp() - GameControl.Instance.PlayerStartExperienceOfLevel()));
@@ -164,6 +192,7 @@ public class UIManager : MonoBehaviour
     public void OpenLeaveStage()
     {
         inGameUI.leaveStage.SetActive(true);
+        inGameUI.currentOpenedWindow = inGameUI.leaveStage;
         inGameUI.leaveStage.GetComponentInChildren<Animator>().SetBool("Open", true);
     }
 
@@ -172,19 +201,117 @@ public class UIManager : MonoBehaviour
         inGameUI.leaveStage.GetComponentInChildren<Animator>().SetBool("Open", false);
     }
 
-    public void DisableLeaveStage()
+    
+
+    public void DisableOpenedWindow()
     {       
-        inGameUI.leaveStage.SetActive(false);
+        inGameUI.currentOpenedWindow.SetActive(false);
+    }
+
+    public void OpenStageCleared()
+    {
+        inGameUI.stageCleared.SetActive(true);
+        inGameUI.windowClearStage.stageTimeLabel.SetActive(false);
+        inGameUI.windowClearStage.stageTimeValue.SetActive(false);
+        inGameUI.windowClearStage.stageXPValue.SetActive(false);
+        inGameUI.windowClearStage.playerTimeLabel.SetActive(false);
+        inGameUI.windowClearStage.playerTimeValue.SetActive(false);
+        inGameUI.windowClearStage.extraXPValue.SetActive(false);
+        inGameUI.windowClearStage.totalXPValue.SetActive(false);
+        inGameUI.windowClearStage.okButton.SetActive(false);
+        SetupStageClearAnimations();
+        inGameUI.currentOpenedWindow = inGameUI.stageCleared;
+        inGameUI.stageCleared.GetComponentInChildren<Animator>().SetBool("Open", true);
+        StartCoroutine("ShowStageClearedRewards");
+    }
+
+    void SetupStageClearAnimations()
+    {
+        
+        //inGameUI.windowClearStage.stageTimeLabel.GetComponent<Animation>().Rewind();
+        inGameUI.windowClearStage.stageTimeValue.GetComponent<Animation>().Rewind();
+        inGameUI.windowClearStage.stageXPValue.GetComponent<Animation>().Rewind();
+        //inGameUI.windowClearStage.playerTimeLabel.GetComponent<Animation>().Rewind();
+        inGameUI.windowClearStage.playerTimeValue.GetComponent<Animation>().Rewind();
+        inGameUI.windowClearStage.extraXPValue.GetComponent<Animation>().Rewind();
+        inGameUI.windowClearStage.totalXPValue.GetComponent<Animation>().Rewind();
+        inGameUI.windowClearStage.okButton.GetComponent<Animation>().Rewind();
+        //inGameUI.windowClearStage.stageTimeLabel.GetComponent<Animation>().Play();
+        inGameUI.windowClearStage.stageTimeValue.GetComponent<Animation>().Play();
+        inGameUI.windowClearStage.stageXPValue.GetComponent<Animation>().Play();
+        //inGameUI.windowClearStage.playerTimeLabel.GetComponent<Animation>().Play();
+        inGameUI.windowClearStage.playerTimeValue.GetComponent<Animation>().Play();
+        inGameUI.windowClearStage.extraXPValue.GetComponent<Animation>().Play();
+        inGameUI.windowClearStage.totalXPValue.GetComponent<Animation>().Play();
+        inGameUI.windowClearStage.okButton.GetComponent<Animation>().Play();
+        //inGameUI.windowClearStage.stageTimeLabel.GetComponent<Animation>().Sample();
+        inGameUI.windowClearStage.stageTimeValue.GetComponent<Animation>().Sample();
+        inGameUI.windowClearStage.stageXPValue.GetComponent<Animation>().Sample();
+        //inGameUI.windowClearStage.playerTimeLabel.GetComponent<Animation>().Sample();
+        inGameUI.windowClearStage.playerTimeValue.GetComponent<Animation>().Sample();
+        inGameUI.windowClearStage.extraXPValue.GetComponent<Animation>().Sample();
+        inGameUI.windowClearStage.totalXPValue.GetComponent<Animation>().Sample();
+        inGameUI.windowClearStage.okButton.GetComponent<Animation>().Sample();
+        //inGameUI.windowClearStage.stageTimeLabel.GetComponent<Animation>().Stop();
+        inGameUI.windowClearStage.stageTimeValue.GetComponent<Animation>().Stop();
+        inGameUI.windowClearStage.stageXPValue.GetComponent<Animation>().Stop();
+        //inGameUI.windowClearStage.playerTimeLabel.GetComponent<Animation>().Stop();
+        inGameUI.windowClearStage.playerTimeValue.GetComponent<Animation>().Stop();
+        inGameUI.windowClearStage.extraXPValue.GetComponent<Animation>().Stop();
+        inGameUI.windowClearStage.totalXPValue.GetComponent<Animation>().Stop();
+        inGameUI.windowClearStage.okButton.GetComponent<Animation>().Stop();
+    }
+
+    IEnumerator ShowStageClearedRewards()
+    {
+        inGameUI.windowClearStage.stageTimeLabel.SetActive(true);
+        inGameUI.windowClearStage.playerTimeLabel.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        
+        inGameUI.windowClearStage.stageTimeValue.SetActive(true);
+        inGameUI.windowClearStage.stageXPValue.SetActive(true);        
+        inGameUI.windowClearStage.playerTimeValue.SetActive(true);
+        inGameUI.windowClearStage.extraXPValue.SetActive(true);
+        inGameUI.windowClearStage.totalXPValue.SetActive(true);
+        inGameUI.windowClearStage.okButton.SetActive(true);
+        inGameUI.windowClearStage.extraXPValueText.SetText("+XP " + GameControl.Instance.StageExtraXP().ToString());
+        inGameUI.windowClearStage.totalXPValueText.SetText("XP " + GameControl.Instance.StageTotalXP().ToString());
+        inGameUI.windowClearStage.stageXPValueText.SetText("XP " + GameControl.Instance.StageXP().ToString());
+        //inGameUI.windowClearStage.stageTimeLabel.GetComponent<Animation>().Play();
+        //yield return new WaitForSeconds(0.2f);
+        inGameUI.windowClearStage.stageTimeValue.GetComponent<Animation>().Play();
+        yield return new WaitForSeconds(0.2f);
+        inGameUI.windowClearStage.stageXPValue.GetComponent<Animation>().Play();
+        yield return new WaitForSeconds(0.2f);
+        //inGameUI.windowClearStage.playerTimeLabel.GetComponent<Animation>().Play();
+        //yield return new WaitForSeconds(0.2f);
+        inGameUI.windowClearStage.playerTimeValue.GetComponent<Animation>().Play();
+        yield return new WaitForSeconds(0.2f);
+        inGameUI.windowClearStage.extraXPValue.GetComponent<Animation>().Play();
+        yield return new WaitForSeconds(0.2f);
+        inGameUI.windowClearStage.totalXPValue.GetComponent<Animation>().Play();
+        yield return new WaitForSeconds(0.2f);
+        inGameUI.windowClearStage.okButton.GetComponent<Animation>().Play();
+        
+
+
+    }
+
+    public void CloseStageCleared()
+    {
+        inGameUI.stageCleared.GetComponentInChildren<Animator>().SetBool("Open", false);
     }
 
     public void UpdateCurrentTime(string time)
     {
         inGameUI.currentTime.SetText(time);
+        inGameUI.windowClearStage.playerTimeValueText.SetText(time);
     }
 
     public void UpdateBestTime(string time)
     {
         inGameUI.bestTime.SetText(time);
+        inGameUI.windowClearStage.stageTimeValueText.SetText(time);
     }
 
     public void PlayPauseButton()
@@ -246,13 +373,14 @@ public class UIManager : MonoBehaviour
     {
         menuUI.coinsValue.SetText(GameControl.Instance.playerData.currentCoins.ToString());
         menuUI.levelValue.SetText(GameControl.Instance.playerData.level.ToString());
-        menuUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString());
+        menuUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString() + "/" + GameControl.Instance.PlayerExperienceToLevelUp().ToString());
         menuUI.experienceFillBar.fillAmount = ((float)(GameControl.Instance.playerData.experience - GameControl.Instance.PlayerStartExperienceOfLevel())
                                                 / (float)(GameControl.Instance.PlayerExperienceToLevelUp() - GameControl.Instance.PlayerStartExperienceOfLevel()));
         menuUI.flyingSaucerStatSpeed.SetText((5 + GameControl.Instance.playerData.playerSpeed).ToString());
         menuUI.flyingSaucerStatRaySize.SetText((2 + (0.5f * GameControl.Instance.playerData.rayRadius)).ToString());
         menuUI.flyingSaucerStatRayMultiplier.SetText((1 + GameControl.Instance.playerData.rayMultiplier).ToString());
         menuUI.mainMenuScript.UpdateCows();
+        menuUI.mainMenuScript.UpdateStages();
     }
 
     public void MainMenuCloseModalWindow()
@@ -268,6 +396,11 @@ public class UIManager : MonoBehaviour
     public void MainMenuCanPurchaseUpgrade()
     {
         menuUI.mainMenuScript.CanPurchaseUpgrade();
+    }
+
+    public void MainMenuLevelUp()
+    {
+        menuUI.mainMenuScript.LevelUp();
     }
 
     #endregion
