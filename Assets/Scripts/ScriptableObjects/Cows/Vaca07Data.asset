@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Vaca07Data
   m_EditorClassIdentifier: 
   id: 7
-  reward: 28
-  xp: 18
+  reward: 37
+  xp: 22
   mass: 0
   movementSpeed: 2
   tier: 0

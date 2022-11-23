@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 7
   nameID: 08
   buildID: 9
-  xp: 70
+  xp: 120
   time: 145
   levelToUnlock: 6
   value: 3500

@@ -26,23 +26,20 @@ public class CowSpawner : MonoBehaviour
             }
         }
         maxCows = numCows;
-        StartCoroutine(DelayInstantiateCows());
+        StartCoroutine(InstantiateCows());
     }
 
-    IEnumerator DelayInstantiateCows()
+    
+
+    IEnumerator InstantiateCows()
     {
         yield return new WaitForSeconds(0.5f);
-        InstantiateCows();
-    }
-
-    private void InstantiateCows()
-    {
-        
-        for(int i = 0; i < maxCows; i++)
+        for (int i = 0; i < maxCows; i++)
         {
             Vector3 position = GetDestinationPoint();
             //Instantiate(cowPrefabs[Random.Range(0, cowPrefabs.Length)], position, Quaternion.identity);
             Instantiate(loadedCows[Random.Range(0, loadedCows.Count)].gamePrefab, position, Quaternion.identity);
+            yield return new WaitForSeconds(0.2f);
         }
     }
 

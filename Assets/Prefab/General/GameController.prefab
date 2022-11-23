@@ -2382,7 +2382,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  m_transform: {fileID: 0}
+  m_transform: {fileID: 1883837446}
 --- !u!1 &2019200303
 GameObject:
   m_ObjectHideFlags: 0
@@ -4499,7 +4499,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7666244059912552265}
   m_HandleRect: {fileID: 8938165796877832805}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8638,7 +8638,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2324168789270788536}
   m_HandleRect: {fileID: 4640679048499561782}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11180,7 +11180,7 @@ MonoBehaviour:
   sceneController: {fileID: 0}
   uiManager: {fileID: 0}
   audioManager: {fileID: 5415433631105100827}
-  playerExperienceToLevelUp: 000000000f0000006400000058020000d00700007c150000983a00007c920000905f01005034030020a10700
+  playerExperienceToLevelUp: 000000000f0000006400000058020000d00700007c150000983a00007c920000905f01005034030000000000
   sceneTotalCows: 0
   stagePlaying: 0
   tutorialsNumber: 2
@@ -11227,6 +11227,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b89cee9005b44aa44892c15417bdcb3d, type: 2}
   - {fileID: 11400000, guid: ed2abc723fae7da439ee18fb28f92984, type: 2}
   - {fileID: 11400000, guid: 348ec133c7e042549910ff119ba22fc4, type: 2}
+  - {fileID: 11400000, guid: c740ecd132a84d44daff7f2e31358183, type: 2}
+  - {fileID: 11400000, guid: 5db8934a63e59ee40ac19b0b93989a6e, type: 2}
+  - {fileID: 11400000, guid: 54abe04d4d0eb10438ba0f387a5a59e4, type: 2}
+  - {fileID: 11400000, guid: a7fc0311986d6a84ba6b4fa28682d18f, type: 2}
+  - {fileID: 11400000, guid: f4d1945004566ea42849bab823a06d74, type: 2}
+  - {fileID: 11400000, guid: fbadf7d42b767044fb3cdf633764b61c, type: 2}
   currentStage: 0
   sceneCurrentCows: 0
   playerData:

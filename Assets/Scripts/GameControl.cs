@@ -332,6 +332,7 @@ public class GameControl : MonoBehaviour
 
     void VerifyLevelUp()
     {
+        if (playerData.level == playerExperienceToLevelUp.Count - 1) return; 
         
         if (playerData.experience >= playerExperienceToLevelUp[playerData.level])
         {
@@ -518,7 +519,7 @@ public class GameControl : MonoBehaviour
 
     public int PlayerExperienceToLevelUp()
     {
-        return playerExperienceToLevelUp[playerData.level];
+        return (playerData.level < playerExperienceToLevelUp.Count) ? playerExperienceToLevelUp[playerData.level] : 0;
     }
 
     public int PlayerStartExperienceOfLevel()

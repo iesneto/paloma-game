@@ -196,8 +196,7 @@ public class FileManager
         }
         else
         {
-            GameControl.Instance.playerData.purchasedStages.Add(0);
-            GameControl.Instance.playerData.purchasedStages.Add(1);
+            GameControl.Instance.playerData.purchasedStages.Add(0);            
         }
     }
 
