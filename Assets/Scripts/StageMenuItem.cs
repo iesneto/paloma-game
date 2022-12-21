@@ -5,136 +5,140 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class StageMenuItem : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler
+namespace Gamob
 {
-
-    public int Id { get; set; }
-    [SerializeField] private RectTransform myTransform;
-    //[SerializeField] private Image itemFrame;
-    //[SerializeField] private Sprite itemSelected;
-    //[SerializeField] private Sprite itemDeselected;
-    //[SerializeField] private Color selected;
-    //[SerializeField] private Color deselected;
-    //[SerializeField] private Image itemIcon;
-    [SerializeField] private GameObject coin;
-    [SerializeField] private TextMeshProUGUI coinText;
-    [SerializeField] private GameObject lockedImage;
-    [SerializeField] private TextMeshProUGUI lockedLevelText;
-    [SerializeField] private TextMeshProUGUI nameText;
-    //private MainMenu mainMenuReference;
-    public delegate void stageItemMenuDelegate(StageMenuItem _stageMenuItem);
-    private stageItemMenuDelegate m_delegate;
-    StageData stage;
-    private float currentScale = 1f;
-    private float maxScale = 1f;
-    private float minScale = 0.5f;
-    private float scaleSpeed = 4f;
-    private bool up, down, exit;
-
-    //public void InitalizeItem(int index, MainMenu reference)
-    public void InitalizeItem(stageItemMenuDelegate _method, int index)
-    {
-        //mainMenuReference = reference;
-        m_delegate = _method;
-        Id = index;        
-        stage = GameControl.Instance.StageDatabyIndex(index);
-        //itemIcon.sprite = cow.icon;
-        UpdateStage(Id);
-    }
-
-
-    public void OnPointerDown(PointerEventData eventData)
+    public class StageMenuItem : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler
     {
 
-        down = true;
-        StartCoroutine("ScaleDown");
-    }
+        public int Id { get; set; }
+        [SerializeField] private RectTransform myTransform;
+        //[SerializeField] private Image itemFrame;
+        //[SerializeField] private Sprite itemSelected;
+        //[SerializeField] private Sprite itemDeselected;
+        //[SerializeField] private Color selected;
+        //[SerializeField] private Color deselected;
+        //[SerializeField] private Image itemIcon;
+        [SerializeField] private GameObject coin;
+        [SerializeField] private TextMeshProUGUI coinText;
+        [SerializeField] private GameObject lockedImage;
+        [SerializeField] private TextMeshProUGUI lockedLevelText;
+        [SerializeField] private TextMeshProUGUI nameText;
+        //private MainMenu mainMenuReference;
+        public delegate void stageItemMenuDelegate(StageMenuItem _stageMenuItem);
+        private stageItemMenuDelegate m_delegate;
+        StageData stage;
+        private float currentScale = 1f;
+        private float maxScale = 1f;
+        private float minScale = 0.5f;
+        private float scaleSpeed = 4f;
+        private bool up, down, exit;
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        up = true;
-        StartCoroutine("ScaleUp");
-    }
-
-
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        exit = true;
-        StartCoroutine("ScaleUp");
-    }
-
-    IEnumerator ScaleDown()
-    {
-
-        for (float i = currentScale; i >= minScale; i -= scaleSpeed * Time.deltaTime)
+        //public void InitalizeItem(int index, MainMenu reference)
+        public void InitalizeItem(stageItemMenuDelegate _method, int index)
         {
-
-            myTransform.localScale = new Vector3(i, i, i);
-            currentScale = i;
-            yield return null;
-            if (up || exit) break;
+            //mainMenuReference = reference;
+            m_delegate = _method;
+            Id = index;
+            stage = GameControl.Instance.StageDatabyIndex(index);
+            //itemIcon.sprite = cow.icon;
+            UpdateStage(Id);
         }
 
-    }
 
-    IEnumerator ScaleUp()
-    {
-        
-        for (float i = currentScale; i <= maxScale; i += scaleSpeed * Time.deltaTime)
+        public void OnPointerDown(PointerEventData eventData)
         {
 
-            myTransform.localScale = new Vector3(i, i, i);
-            currentScale = i;
-            yield return null;
+            down = true;
+            StartCoroutine("ScaleDown");
         }
 
-        if (up) SelectItem();
-
-        up = exit = false;
-    }
-
-
-
-    public void SelectItem()
-    {
-
-        //mainMenuReference.StagesAreaSelectItem(this);
-        m_delegate(this);
-    }
-
-   
-
-    public void purchasedItem()
-    {
-        coin.SetActive(false);
-    }
-
-    public void UpdateStage(int index)
-    {
-
-        coin.SetActive(false);
-        nameText.SetText(stage.nameID);
-        
-        if (GameControl.Instance.playerData.level < stage.levelToUnlock)
+        public void OnPointerClick(PointerEventData eventData)
         {
-            lockedImage.SetActive(true);
-            lockedLevelText.SetText("Lv. " + stage.levelToUnlock);
+            up = true;
+            StartCoroutine("ScaleUp");
         }
-        else
+
+
+
+        public void OnPointerExit(PointerEventData eventData)
         {
-            lockedImage.SetActive(false);
-            if (!GameControl.Instance.playerData.purchasedStages.Contains(index))
+            exit = true;
+            StartCoroutine("ScaleUp");
+        }
+
+        IEnumerator ScaleDown()
+        {
+
+            for (float i = currentScale; i >= minScale; i -= scaleSpeed * Time.deltaTime)
             {
-                coin.SetActive(true);
-                coinText.SetText(stage.value.ToString());
-            }
-            
-        }
-    }
 
-    public StageData ItemStageData()
-    {
-        return stage;
+                myTransform.localScale = new Vector3(i, i, i);
+                currentScale = i;
+                yield return null;
+                if (up || exit) break;
+            }
+
+        }
+
+        IEnumerator ScaleUp()
+        {
+
+            for (float i = currentScale; i <= maxScale; i += scaleSpeed * Time.deltaTime)
+            {
+
+                myTransform.localScale = new Vector3(i, i, i);
+                currentScale = i;
+                yield return null;
+            }
+
+            if (up) SelectItem();
+
+            up = exit = false;
+        }
+
+
+
+        public void SelectItem()
+        {
+
+            //mainMenuReference.StagesAreaSelectItem(this);
+            m_delegate(this);
+
+        }
+
+
+
+        public void purchasedItem()
+        {
+            coin.SetActive(false);
+        }
+
+        public void UpdateStage(int index)
+        {
+
+            coin.SetActive(false);
+            nameText.SetText(stage.nameID);
+
+            if (GameControl.Instance.playerData.level < stage.levelToUnlock)
+            {
+                lockedImage.SetActive(true);
+                lockedLevelText.SetText("Lv. " + stage.levelToUnlock);
+            }
+            else
+            {
+                lockedImage.SetActive(false);
+                if (!GameControl.Instance.playerData.purchasedStages.Contains(index))
+                {
+                    coin.SetActive(true);
+                    coinText.SetText(stage.value.ToString());
+                }
+
+            }
+        }
+
+        public StageData ItemStageData()
+        {
+            return stage;
+        }
     }
 }

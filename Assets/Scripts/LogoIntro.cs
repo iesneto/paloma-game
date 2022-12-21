@@ -4,28 +4,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class LogoIntro : MonoBehaviour
+namespace Gamob
 {
-    [SerializeField] private Image logo;
-    [SerializeField] private float fadeSpeed;
-
-    private void Awake()
+    public class LogoIntro : MonoBehaviour
     {
-        Color c = logo.color;
-        c.a = 0;
-        logo.color = c;
-        StartCoroutine("FadeInImage");
-    }
+        [SerializeField] private Image logo;
+        [SerializeField] private float fadeSpeed;
 
-    IEnumerator FadeInImage()
-    {
-        for(float i = 0; i <= 1f; i += fadeSpeed * Time.deltaTime)
+        private void Awake()
         {
             Color c = logo.color;
-            c.a = i;
+            c.a = 0;
             logo.color = c;
-            yield return null;
+            StartCoroutine("FadeInImage");
         }
-        SceneManager.LoadScene(1);
+
+        IEnumerator FadeInImage()
+        {
+            for (float i = 0; i <= 1f; i += fadeSpeed * Time.deltaTime)
+            {
+                Color c = logo.color;
+                c.a = i;
+                logo.color = c;
+                yield return null;
+            }
+            SceneManager.LoadScene(1);
+        }
     }
 }

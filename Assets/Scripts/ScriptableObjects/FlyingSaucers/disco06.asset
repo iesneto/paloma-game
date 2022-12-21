@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 6
   value: 250
-  levelToUnlock: 3
+  levelToUnlock: 4
   icon: {fileID: 21300000, guid: 809297c3a2267b844859d5a39f5dbf20, type: 3}
   model: {fileID: 7021849156242837296, guid: 9fa2185f639d32b4ca99c51b9360464e, type: 3}

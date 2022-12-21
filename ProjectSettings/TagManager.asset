@@ -9,6 +9,7 @@ TagManager:
   - Floor
   - PlayerStartLocation
   - Environment
+  - Cloud
   layers:
   - Default
   - TransparentFX
@@ -32,7 +33,7 @@ TagManager:
   - Boundaries
   - AnimalObstacle
   - Decals
-  - 
+  - Clouds
   - 
   - 
   - 

@@ -15,34 +15,38 @@
 using System.Collections;
 using UnityEngine;
 
-public class CoroutineExample : MonoBehaviour
+namespace Gamob
 {
-    
-    void Start()
+
+    public class CoroutineExample : MonoBehaviour
     {
-        Debug.Log("Started game.");
-        StartCoroutine("LoadSomething");
-        ContinueGameWhileWaitForCoroutine();
-        
+
+        void Start()
+        {
+            Debug.Log("Started game.");
+            StartCoroutine("LoadSomething");
+            ContinueGameWhileWaitForCoroutine();
+
+        }
+
+        IEnumerator LoadSomething()
+        {
+            Debug.Log("Loading Something in coroutine.");
+            yield return new WaitForSeconds(5.0f);
+            CoroutineEndedUpdateSomething();
+
+        }
+
+
+        void ContinueGameWhileWaitForCoroutine()
+        {
+            Debug.Log("Continue Game... Shows a loading animation");
+        }
+
+        void CoroutineEndedUpdateSomething()
+        {
+            Debug.Log("Coroutine has ended... Update something and continue game");
+        }
+
     }
-
-    IEnumerator LoadSomething()
-    {
-        Debug.Log("Loading Something in coroutine.");
-        yield return new WaitForSeconds(5.0f);
-        CoroutineEndedUpdateSomething();
-
-    }
-
-
-    void ContinueGameWhileWaitForCoroutine()
-    {
-        Debug.Log("Continue Game... Shows a loading animation");
-    }
-
-    void CoroutineEndedUpdateSomething()
-    {
-        Debug.Log("Coroutine has ended... Update something and continue game");
-    }
-
 }

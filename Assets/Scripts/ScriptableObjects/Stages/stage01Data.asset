@@ -16,6 +16,7 @@ MonoBehaviour:
   nameID: 01
   buildID: 2
   xp: 15
+  rewardCoins: 10
   time: 60
   levelToUnlock: 0
   value: 0

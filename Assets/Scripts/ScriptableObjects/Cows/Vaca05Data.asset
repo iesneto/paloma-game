@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 5
   reward: 25
-  xp: 15
+  xp: 20
   mass: 0
   movementSpeed: 1.8
   tier: 0
   value: 500
-  levelToUnlock: 4
+  levelToUnlock: 6
   icon: {fileID: 21300000, guid: 4e589dbad7cd4ff4fb4c284c4cc96823, type: 3}
   gamePrefab: {fileID: 7924381965852854766, guid: 60fac4ed0e4f4e74e9059d2d147646dc,
     type: 3}

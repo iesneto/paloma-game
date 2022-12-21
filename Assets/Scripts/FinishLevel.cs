@@ -2,28 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FinishLevel : MonoBehaviour
+namespace Gamob
 {
-    private GameControl control;
-
-    private void Awake()
+    public class FinishLevel : MonoBehaviour
     {
-        control = GameControl.Instance;
-    }
+        private GameControl control;
 
-    public void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Player")
+        private void Awake()
         {
-            control.LoadMainMenu();
+            control = GameControl.Instance;
         }
-    }
 
-    public void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.tag == "Player")
+        public void OnTriggerEnter(Collider other)
         {
-            Debug.Log("Player found");
+            if (other.gameObject.tag == "Player")
+            {
+                control.LoadMainMenu();
+            }
+        }
+
+        public void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.tag == "Player")
+            {
+                Debug.Log("Player found");
+            }
         }
     }
 }

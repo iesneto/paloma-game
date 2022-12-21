@@ -7,94 +7,113 @@ using UnityEngine.Serialization;
 using UnityEngine.Events;
 using System;
 
-public class InteractableInterface : Selectable, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler
+namespace Gamob
 {
-    [Serializable]
-    /// <summary>
-    /// Function definition for a button click event.
-    /// </summary>
-    public class ButtonClickedEvent : UnityEvent { }
-
-    // Event delegates triggered on click.
-    [FormerlySerializedAs("onClick")]
-    [SerializeField]
-    private ButtonClickedEvent m_OnClick = new ButtonClickedEvent();
-
-    protected InteractableInterface()
-    { }
-
-    public ButtonClickedEvent onClick
+    public class InteractableInterface : Selectable, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler
     {
-        get { return m_OnClick; }
-        set { m_OnClick = value; }
-    }
+        [Serializable]
+        /// <summary>
+        /// Function definition for a button click event.
+        /// </summary>
+        public class ButtonClickedEvent : UnityEvent { }
 
-    private void Press()
-    {
-        if (!IsActive() || !IsInteractable())
-            return;
+        // Event delegates triggered on click.
+        [FormerlySerializedAs("onClick")]
+        [SerializeField]
+        private ButtonClickedEvent m_OnClick = new ButtonClickedEvent();
 
-        UISystemProfilerApi.AddMarker("Button.onClick", this);
-        m_OnClick.Invoke();
-    }
+        protected InteractableInterface()
+        { }
 
-    [SerializeField] private Transform m_transform;
-    private float currentScale = 1f;
-    private float maxScale = 1f;
-    private float minScale = 0.5f;
-    private float scaleSpeed = 4f;
-    private bool up, down, exit;
-    public override void OnPointerDown(PointerEventData eventData)
-    {
-        down = true;
-        StartCoroutine("ScaleDownGameObject");
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        up = true;
-        StartCoroutine("ScaleUpGameObject");
-    }
-
-    public override void OnPointerExit(PointerEventData eventData)
-    {
-        exit = true;
-        StartCoroutine("ScaleUpGameObject");
-    }
-
-    protected override void OnDisable()
-    {
-        StopAllCoroutines();
-        gameObject.transform.localScale = new Vector3(maxScale, maxScale, maxScale);
-    }
-
-    IEnumerator ScaleDownGameObject()
-    {
-        for(float i = currentScale; i >= minScale; i -= scaleSpeed*Time.deltaTime)
+        public ButtonClickedEvent onClick
         {
-            // Vector3 newscale = gameObject.transform.localScale - new Vector3(-)
-            m_transform.localScale = new Vector3(i,i,i);
-            currentScale = i;
-            yield return null;
-            if (up || exit) break;
+            get { return m_OnClick; }
+            set { m_OnClick = value; }
         }
-        //gameObject.transform.localScale = new Vector3(minScale, minScale, minScale);
-    }
 
-    IEnumerator ScaleUpGameObject()
-    {
-        for (float i = currentScale; i <= maxScale; i += scaleSpeed*Time.deltaTime)
+        private void Press()
         {
-            // Vector3 newscale = gameObject.transform.localScale - new Vector3(-)
-            m_transform.localScale = new Vector3(i, i, i);
-            currentScale = i;
-            yield return null;
+            if (!IsActive() || !IsInteractable())
+                return;
+
+            UISystemProfilerApi.AddMarker("Button.onClick", this);
+            m_OnClick.Invoke();
         }
-        //gameObject.transform.localScale = new Vector3(maxScale, maxScale, maxScale);
 
-        if (up) Press();
+        [SerializeField] private Transform m_transform;
+        [SerializeField] private List<Image> m_Images;
+        [SerializeField] private Color enabledColor;
+        [SerializeField] private Color disabledColor;
 
-        up = exit = false;
+        private float currentScale = 1f;
+        private float maxScale = 1f;
+        private float minScale = 0.5f;
+        private float scaleSpeed = 4f;
+        private bool up, down, exit;
+        public override void OnPointerDown(PointerEventData eventData)
+        {
+            if (!IsActive() || !IsInteractable())
+                return;
+
+            down = true;
+            StartCoroutine("ScaleDownGameObject");
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            up = true;
+            StartCoroutine("ScaleUpGameObject");
+        }
+
+        public override void OnPointerExit(PointerEventData eventData)
+        {
+            exit = true;
+            StartCoroutine("ScaleUpGameObject");
+        }
+
+        protected override void OnDisable()
+        {
+            StopAllCoroutines();
+            gameObject.transform.localScale = new Vector3(maxScale, maxScale, maxScale);
+        }
+
+        IEnumerator ScaleDownGameObject()
+        {
+            for (float i = currentScale; i >= minScale; i -= scaleSpeed * Time.deltaTime)
+            {
+                // Vector3 newscale = gameObject.transform.localScale - new Vector3(-)
+                m_transform.localScale = new Vector3(i, i, i);
+                currentScale = i;
+                yield return null;
+                if (up || exit) break;
+            }
+            //gameObject.transform.localScale = new Vector3(minScale, minScale, minScale);
+        }
+
+        IEnumerator ScaleUpGameObject()
+        {
+            for (float i = currentScale; i <= maxScale; i += scaleSpeed * Time.deltaTime)
+            {
+                // Vector3 newscale = gameObject.transform.localScale - new Vector3(-)
+                m_transform.localScale = new Vector3(i, i, i);
+                currentScale = i;
+                yield return null;
+            }
+            //gameObject.transform.localScale = new Vector3(maxScale, maxScale, maxScale);
+
+            if (up) Press();
+
+            up = exit = false;
+        }
+
+        public void SetInteractable(bool _interactable)
+        {
+            interactable = _interactable;
+            foreach (Image i in m_Images)
+            {
+                i.color = IsInteractable() ? enabledColor : disabledColor;
+            }
+        }
+
     }
-
 }

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class TutorialInteractable : MonoBehaviour, IPointerDownHandler
+namespace Gamob
 {
-    [SerializeField] private Tutorial tutorial;
-    public void OnPointerDown(PointerEventData eventData)
+    public class TutorialInteractable : MonoBehaviour, IPointerDownHandler
     {
-        tutorial.OnPointerEnter();
+        [SerializeField] private Tutorial tutorial;
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            tutorial.OnPointerEnter();
+        }
     }
 }

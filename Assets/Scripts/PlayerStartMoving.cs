@@ -1,11 +1,14 @@
 using UnityEngine.EventSystems;
 using UnityEngine;
 
-public class PlayerStartMoving : MonoBehaviour, IPointerDownHandler
+namespace Gamob
 {
-    public void OnPointerDown(PointerEventData eventData)
+    public class PlayerStartMoving : MonoBehaviour, IPointerDownHandler
     {
-        
-        GameControl.Instance.StartMoving();
+        public void OnPointerDown(PointerEventData eventData)
+        {
+
+            GameControl.Instance.StartMoving();
+        }
     }
 }

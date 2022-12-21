@@ -10,81 +10,85 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPositioning : MonoBehaviour
+
+namespace Gamob
 {
-    [SerializeField] private float posY;
-    [SerializeField] private float worldY;
-    [SerializeField] private float rayLength;
-    [SerializeField] private float levelingSpeed;
-    //[SerializeField] private float deacceleration;
-   // [SerializeField] private float dampTime;
-   // [SerializeField] private float objectPosition;
-
-    private void Start()
+    public class ObjectPositioning : MonoBehaviour
     {
-        PositionObject();
-    }
+        [SerializeField] private float posY;
+        [SerializeField] private float worldY;
+        [SerializeField] private float rayLength;
+        [SerializeField] private float levelingSpeed;
+        //[SerializeField] private float deacceleration;
+        // [SerializeField] private float dampTime;
+        // [SerializeField] private float objectPosition;
 
-    public void PositionObject()
-    {
-        RaycastHit hit;
-        Ray ray = new Ray(transform.position, Vector3.down);
-        if (Physics.Raycast(ray, out hit, rayLength))
+        private void Start()
         {
-            if (hit.collider.gameObject.tag == "Floor")
-            {
-                worldY = transform.position.y - hit.distance;
+            PositionObject();
+        }
 
-                transform.position = new Vector3(transform.position.x, posY + worldY, transform.position.z);
-                
+        public void PositionObject()
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if (Physics.Raycast(ray, out hit, rayLength))
+            {
+                if (hit.collider.gameObject.tag == "Floor")
+                {
+                    worldY = transform.position.y - hit.distance;
+
+                    transform.position = new Vector3(transform.position.x, posY + worldY, transform.position.z);
+
+
+
+                }
+            }
+        }
+
+        public void Leveling()
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if (Physics.Raycast(ray, out hit, rayLength))
+            {
+                if (hit.collider.gameObject.tag == "Floor")
+                {
+                    worldY = transform.position.y - hit.distance;
+                    // Ivo Seitenfus
+                    // levelingSpeed is used for tolerance pourposes
+                    if (transform.position.y < posY + worldY - levelingSpeed) StartCoroutine("SmoothLevelingUp");
+                    else if (transform.position.y > posY + worldY + levelingSpeed) StartCoroutine("SmoothLevelingDown");
+                }
 
 
             }
         }
-    }
 
-    public void Leveling()
-    {
-        RaycastHit hit;
-        Ray ray = new Ray(transform.position, Vector3.down);
-        if (Physics.Raycast(ray, out hit, rayLength))
+        IEnumerator SmoothLevelingUp()
         {
-            if (hit.collider.gameObject.tag == "Floor")
+
+            while (transform.position.y < posY + worldY)
             {
-                worldY = transform.position.y - hit.distance;
-                // Ivo Seitenfus
-                // levelingSpeed is used for tolerance pourposes
-                if (transform.position.y < posY + worldY - levelingSpeed) StartCoroutine("SmoothLevelingUp");
-                else if (transform.position.y > posY + worldY + levelingSpeed) StartCoroutine("SmoothLevelingDown");
+                transform.position += new Vector3(0, levelingSpeed, 0);
+                yield return null;
             }
 
-            
         }
-    }
 
-    IEnumerator SmoothLevelingUp()
-    {
-       
-        while (transform.position.y < posY + worldY)
+        IEnumerator SmoothLevelingDown()
         {
-            transform.position += new Vector3(0, levelingSpeed, 0);
-            yield return null;
+
+            while (transform.position.y > posY + worldY)
+            {
+                transform.position -= new Vector3(0, levelingSpeed, 0);
+                yield return null;
+            }
+
         }
 
-    }
 
-    IEnumerator SmoothLevelingDown()
-    {
 
-        while (transform.position.y > posY + worldY)
-        {
-            transform.position -= new Vector3(0, levelingSpeed, 0);
-            yield return null;
-        }
 
     }
-
-
-
-
 }
