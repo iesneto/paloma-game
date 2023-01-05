@@ -151,17 +151,23 @@ namespace Gamob
                 //if (Vector3.Distance(transform.position, destination) <= 1.5f)
                 if (destinyDistance <= 1.5f)
                 {
-                    walk = false;
-                    EndAnimation(3);
-                    backFromWalk = true;
-                    if (!waitingCoroutine)
-                        GotoIdle();
+                    StopWalking();
                 }
                 yield return null;
 
             }
             anim.speed = 1;
 
+
+        }
+
+        void StopWalking()
+        {
+            walk = false;
+            EndAnimation(3);
+            backFromWalk = true;
+            if (!waitingCoroutine)
+                GotoIdle();
 
         }
 
@@ -185,11 +191,10 @@ namespace Gamob
                 Ray ray = new Ray(transform.position, direction);
                 //Debug.DrawRay(transform.position, dest - transform.position, Color.blue, 5);
                 if (!Physics.Raycast(ray, out hit, sightDistance))
-                {
-
-
+                {                    
                     blocked = false;
                 }
+                
                 //else
                 //{
                 //    if (hit.collider.tag == "Bound")
@@ -248,6 +253,10 @@ namespace Gamob
                 StartCoroutine("ResetCowFromGrabbed");
 
 
+            }
+            if(collision.gameObject.layer == LayerMask.NameToLayer("AnimalObstacle") && walk)
+            {
+                StopWalking();
             }
         }
 

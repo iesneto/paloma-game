@@ -26,13 +26,18 @@ namespace Gamob
         [SerializeField] private int sceneTotalCows;
         [SerializeField] private bool stagePlaying;
         //[SerializeField] private int stageClearedExperience;
-        [SerializeField] private int tutorialsNumber;
+        //[SerializeField] private int tutorialsNumber;
         [SerializeField] private Tutorial tutorial;
         [SerializeField] private bool playerStartedMoving;
         [SerializeField] private List<FlyingSaucerData> flyingSaucers;
         [SerializeField] private List<CowData> cows;
         [SerializeField] private List<StageData> stages;
         [SerializeField] private int currentStage;
+        [SerializeField] private int randomPlayCounter;
+        [SerializeField] private int randomPlayMaxWithoutAds;
+        [SerializeField] private bool randomPlay;
+        [SerializeField] private float amortizationFactor;
+        private bool dropped;
 
         //[SerializeField] private List<int> availableFlyingSaucersIds;
 
@@ -101,6 +106,9 @@ namespace Gamob
                 return;
             }
 
+            //TODO: OnButtonCallRateUS
+            //Application.OpenURL ("market://details?id=" + Application.productName);
+
             DontDestroyOnLoad(gameObject);
             _instance = this;
             playerData = new PlayerData();
@@ -121,6 +129,7 @@ namespace Gamob
 
         void InitializeSoundConfig()
         {
+            audioManager.Initialize();
             uiManager.SetSoundConfiguration(playerData.music, playerData.sfx);
             if (!playerData.music) audioManager.DisableMusic();
             if (!playerData.sfx) audioManager.DisableSFX();
@@ -133,12 +142,18 @@ namespace Gamob
                 playerData.numCows.Add(0);
             }
 
-            for (int i = 0; i < tutorialsNumber; i++)
+            for (int i = 0; i < tutorial.TutorialsNumber(); i++)
             {
+                
                 playerData.tutorials.Add(false);
             }
         }
 
+        public void Shocked()
+        {
+            playerData.timesShocked++;
+            SaveData();
+        }
 
 
 
@@ -177,7 +192,8 @@ namespace Gamob
             sceneTotalCows = 0;
             stageCleared = true;
             uiManager.ResetCowsFillBar();
-            uiManager.ResetTimers();
+            uiManager.ResetTimers();            
+            
         }
 
         public void StartMainMenu()
@@ -187,7 +203,7 @@ namespace Gamob
                 uiManager.LoadMainMenuPlay();
                 PlayDockStationMusic();
 
-                if (_adsManager.isReady)
+                if (_adsManager.isReady && !_adsManager.interstitialLoaded)
                 {
                     _adsManager.LoadInterstitialAd();
                 }
@@ -219,7 +235,7 @@ namespace Gamob
             if (stagePlaying)
             {
                 playerStartedMoving = false;
-                tutorial.WakeUp();
+                tutorial.WakeUp();                
                 StartCoroutine("StartLevel");
             }
         }
@@ -256,7 +272,7 @@ namespace Gamob
 
             stagePlaying = true;
 
-            if (_adsManager.isReady)
+            if (_adsManager.isReady && !_adsManager.rewardedLoaded)
             {
 
                 _adsManager.LoadRewardedAd();
@@ -267,7 +283,7 @@ namespace Gamob
         {
             //int totalTime =  60 + (sceneTotalCows * 5 / playerData.level)  - (5 * playerData.level);
             int totalTime = stages[currentStage].time;
-            float timeAmortizationByPlayerLevel = (totalTime * 5 * playerData.level) / 100;
+            float timeAmortizationByPlayerLevel = (totalTime * amortizationFactor * playerData.level) / 100;
             //Debug.Log("time amortization: " + timeAmortizationByPlayerLevel);
             int stageTime = totalTime - (int)Mathf.Ceil(timeAmortizationByPlayerLevel);
 
@@ -292,10 +308,15 @@ namespace Gamob
 
         IEnumerator StartLevel()
         {
+            dropped = false;
             while (!playerStartedMoving)
             {
                 yield return null;
-            }
+                if (dropped)
+                {                    
+                    yield break;
+                }
+            }           
             uiManager.ClosePlayerStartedUI();
             stageCleared = false;
             player.GetComponent<PlayerBehavior>().Unlock();
@@ -335,8 +356,7 @@ namespace Gamob
             if (playerData.level == playerExperienceToLevelUp.Count - 1) return;
 
             if (playerData.experience >= playerExperienceToLevelUp[playerData.level])
-            {
-                // TO DO:  Level Up magic
+            {                
                 playerData.level++;
                 bool levelUpSpeed, levelUpRayRadius, levelUpRayMultiplier;
                 levelUpSpeed = levelUpRayRadius = levelUpRayMultiplier = false;
@@ -433,6 +453,7 @@ namespace Gamob
 
         public void DropStage()
         {
+            dropped = true;            
             playerData.timesDropStage++;
             SaveData();
         }
@@ -458,6 +479,7 @@ namespace Gamob
             AddExperience(stageTotalXP);
             uiManager.InGameUISync();
             uiManager.OpenStageCleared();
+            player.GetComponent<PlayerBehavior>().Lock();
         }
 
         public int StageMinutes()
@@ -711,6 +733,36 @@ namespace Gamob
 
         }
 
+        public bool CanShowAdsIcon()
+        {
+            if (randomPlayCounter >= randomPlayMaxWithoutAds - 1 && _adsManager.interstitialLoaded) return true;
+
+            return false;
+        }
+
+        public void PrepareToLoadStage(int stageNumber)
+        {
+            if (stageNumber < 0)
+            {
+                randomPlay = true;
+                randomPlayCounter++;
+                if(randomPlayCounter >= randomPlayMaxWithoutAds && _adsManager.interstitialLoaded)
+                {
+                    randomPlayCounter = 0;
+                    _adsManager.ShowInterstitialAd();
+                }
+                else
+                {
+                    LoadStage();
+                }
+            }
+            else
+            {
+                randomPlayCounter = 0;
+                SetStageToLoadShowInterstitialAds(stageNumber);
+            }
+        }
+
         public void SetStageToLoadShowInterstitialAds(int stageIndex)
         {
             SetStage(stageIndex);
@@ -719,8 +771,17 @@ namespace Gamob
 
         public void LoadStage()
         {
+                       
             StartPlaying();
-            sceneController.LoadLevel(StageDatabyIndex(currentStage).id);
+            if(randomPlay)
+            {
+                sceneController.LoadRandomLevel();                
+            }
+            else
+            {
+                sceneController.LoadLevel(StageDatabyIndex(currentStage).id);
+            }
+            randomPlay = false;
         }
 
         public void AdsDoneRewardPlayer()
@@ -787,6 +848,16 @@ namespace Gamob
                 audioManager.DisableMusic();
             }
             uiManager.SetSoundConfiguration(playerData.music, playerData.sfx);
+        }
+
+        public void SetTutorialCloud()
+        {
+            if (!playerData.tutorials[2]) tutorial.ShowTutorial02();
+        }
+
+        public String CurrentStage()
+        {
+            return stages[currentStage].nameID.ToString();
         }
     }
 }

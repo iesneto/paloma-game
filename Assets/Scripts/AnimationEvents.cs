@@ -50,10 +50,10 @@ namespace Gamob
             parent.GetComponent<UIManager>().DisableOpenedWindow();
         }
 
-        public void CloseTutorialWindow()
-        {
-            parent.GetComponent<Tutorial>().OnPointerEnter();
-        }
+        //public void CloseTutorialWindow()
+        //{
+        //    parent.GetComponent<Tutorial>().OnPointerEnter();
+        //}
 
         public void CloseMainMenuWindow()
         {

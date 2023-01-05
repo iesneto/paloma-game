@@ -29244,6 +29244,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 0e46fc1d-a2d3-460a-b5e8-a6712b95da75
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6209623959271439501}
+        m_TargetAssemblyTypeName: Gamob.PlayerBehavior, Assembly-CSharp
+        m_MethodName: OnMoveTouch
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: d580944e-7d49-41e9-886a-8478d5301cc2
+    m_ActionName: Player/TouchScreen[/Touchscreen/primaryTouch]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -29369,7 +29385,7 @@ MonoBehaviour:
   posY: 6
   worldY: 0
   rayLength: 100
-  levelingSpeed: 0.001
+  levelingSpeed: 0.005
 --- !u!54 &8627162181337791648
 Rigidbody:
   m_ObjectHideFlags: 0

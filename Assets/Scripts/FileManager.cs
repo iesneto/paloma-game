@@ -133,6 +133,9 @@ namespace Gamob
             playerData.timesStageClearOutTime = GameControl.Instance.playerData.timesStageClearOutTime;
             playerData.timesDropStage = GameControl.Instance.playerData.timesDropStage;
 
+            // Update 22/12/2022 - Ivo Seitenfus
+            playerData.timesShocked = GameControl.Instance.playerData.timesShocked;
+
             //appData.name = Core.Instance.currentProjectName;
 
             return playerData;
@@ -228,6 +231,9 @@ namespace Gamob
             GameControl.Instance.playerData.timesStageClearInTime = playerData.timesStageClearInTime;
             GameControl.Instance.playerData.timesStageClearOutTime = playerData.timesStageClearOutTime;
             GameControl.Instance.playerData.timesDropStage = playerData.timesDropStage;
+
+            // Update 22/12/2022 - Ivo Seitenfus
+            GameControl.Instance.playerData.timesShocked = playerData.timesShocked;
         }
 
         public void VerifySavedFiles()

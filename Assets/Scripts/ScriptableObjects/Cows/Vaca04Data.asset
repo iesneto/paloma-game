@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Vaca04Data
   m_EditorClassIdentifier: 
   id: 4
-  reward: 22
-  xp: 12
+  reward: 60
+  xp: 40
   mass: 0
   movementSpeed: 2.2
   tier: 0
-  value: 300
+  value: 750
   levelToUnlock: 5
   icon: {fileID: 21300000, guid: 4ded23b7fb22de9419cb6904e1c9d43c, type: 3}
   gamePrefab: {fileID: 5936683710513958363, guid: ba3f5e7f02ea58c40bc22455672f70a3,

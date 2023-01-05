@@ -12,6 +12,7 @@ namespace Gamob
         [SerializeField] private bool locked;
         [SerializeField] private bool shocked;
         private CameraEffects cameraEffects;
+        private Camera camera;
         public float grabRate;
         public bool instantGrab;
         [SerializeField] private PlayerAttributes playerAttributes;
@@ -107,28 +108,7 @@ namespace Gamob
 
         private void OnEnable()
         {
-            //controls.Player.Enable();
-            //controls.UI.Enable();
-            //controls.Player.MouseMove.Enable();
-            //controls.Player.MouseMove.started += OnTouchMove;
-            //controls.Player.MouseMove.performed += OnTouchMove;
-            //controls.Player.MouseMove.canceled += OnTouchMove;
-
-
-            // controls.Player.Press.Enable();
-            // controls.Player.PressRelease.Enable();
-            //// controls.Player.Press.Enable();
-            // controls.Player.Press.started += Press;
-            // controls.Player.Press.performed += StartMove;
-            // controls.Player.PressRelease.started += StopMove;
-            //controls.Player.Hold.canceled += HoldCanceled;
-            //controls.Player.Press.started += PressStart;
-            //controls.Player.Press.performed += PressPerformed;
-            // controls.Player.Press.canceled += PressCanceled;
-            //controls.Player.Hold.performed += StartMove;
-            //controls.Player.Hold.canceled += StopMove;
-            //controls.Player.Press.performed += Press;
-            //controls.Player.Press.canceled += StopMove;
+            
 
         }
 
@@ -137,71 +117,29 @@ namespace Gamob
         private void OnDisable()
         {
 
-            //controls.Player.Move.started -= OnTouchMove;
-            //controls.Player.Move.performed -= OnTouchMove;
-            //controls.Player.Move.canceled -= OnTouchMove;
-            //controls.Player.Move.Disable();
-            //controls.Player.Disable();
-            //controls.UI.Disable();
-            //controls.Disable();
-            //controls.Dispose();
-
-            // até aqui
-
-
-            //controls.Player.Press.Disable();
-            //controls.Player.PressRelease.Disable();
-            ////controls.Player.Press.Disable();
-            //controls.Player.Press.started -= Press;
-            //controls.Player.Press.performed -= StartMove;
-            //controls.Player.PressRelease.started -= StopMove;
-            //controls.Player.Hold.canceled -= HoldCanceled;
-            //controls.Player.Press.started -= PressStart;
-            //controls.Player.Press.performed -= PressPerformed;
-            //controls.Player.Press.canceled -= PressCanceled;
-            //controls.Player.Hold.performed -= StartMove;
-            //controls.Player.Hold.canceled -= StopMove;
-            //controls.Player.Press.performed -= Press;
-            //controls.Player.Press.canceled -= StopMove;
+            
         }
 
-        //private void Update() => Move();
+        public void OnMoveTouch(InputAction.CallbackContext context)
+        {
+            // TODO: Code to implement TouchScreen Move
+            //if (context.performed)
+            //{
+            //    // We want to hit only the Floor layer
+            //    int layermask = 1 << LayerMask.NameToLayer("Floor");
+            //    RaycastHit hit;
+            //    Ray ray = camera.ScreenPointToRay(playerInput.actions["TouchMove"].ReadValue<Vector2>());
 
-        //public void OnTouchMove(InputAction.CallbackContext context)
-        //{
+            //    if (Physics.Raycast(ray, out hit, 100, layermask))
+            //    {
+            //        Transform objectHit = hit.transform;
+            //        Debug.DrawRay(camera.gameObject.transform.position, hit.point - camera.gameObject.transform.position, Color.blue, 5);
+            //    }
+                
+            //}
+        }
 
-        //    if (locked) return;
-
-        //    //update 19/09/2022 - Ivo Seitenfus
-        //    // Automatic grab now executed by an coroutine
-        //    //if(context.started)
-        //    //{
-
-        //    //    if (!move && (cowsInRay.Count > 0))
-        //    //    {
-        //    //        LevitateCow();
-        //    //    }
-        //    //}
-
-        //    if (context.performed /*&& !grab*/)
-        //    {
-
-        //        //pressStartPosition = Pointer.current.position.ReadValue();
-
-        //        //move = true;
-        //        //turret.Play();
-        //        //StartCoroutine("Moving");
-        //    }
-
-
-        //    if (context.canceled)
-        //    {
-
-        //        //turret.Stop();
-        //        //move = false;
-
-        //    }
-        //}
+        
 
         private void Update()
         {
@@ -262,11 +200,59 @@ namespace Gamob
             }
 
         }
+        IEnumerator TouchMoving()
+        {
+
+            while (move)
+
+            {
+
+                levelingScript.Leveling();
+
+                //pressCurrentPosition = Pointer.current.position.ReadValue();
+                //speedMagnitude = Vector3.Distance(pressStartPosition, pressCurrentPosition);
+                //if (speedMagnitude >= 100) speedMagnitude = 1f;
+                //else speedMagnitude /= 100f;
+                //Vector2 speed = (pressCurrentPosition - pressStartPosition).normalized * speedMagnitude;
+
+                //direction = new Vector3(speed.x, 0, speed.y);
+                Vector2 input = playerInput.actions["TouchMove"].ReadValue<Vector2>();
+
+
+
+                direction = new Vector3(input.x, 0, input.y);
+
+                //float flyDistance = (direction * playerAttributes.MovementSpeed * Time.deltaTime).magnitude;
+
+
+                Vector3 previousPosition = transform.position;
+                transform.Translate(direction * playerAttributes.MovementSpeed * Time.deltaTime);
+
+
+                TiltFlySaucer();
+
+                PositionFlySaucerTurret();
+
+                yield return null;
+
+                Vector3 currentPosition = transform.position;
+                flyingDistance = Vector3.Distance(currentPosition, previousPosition);
+                if (GameControl.Instance != null && flyingDistance >= flyingDistanceThreshold)
+                {
+                    GameControl.Instance.AddFlyDistance(flyingDistance);
+                }
+
+            }
+            StartCoroutine("SmoothBreak");
+            StartCoroutine("SmoothTilt");
+
+
+        }
 
         IEnumerator Moving()
         {
 
-            while (move)
+            while (move && !locked)
 
             {
 
@@ -434,9 +420,11 @@ namespace Gamob
         }
         IEnumerator ShockFlyingSaucer()
         {
+            GameControl.Instance.Shocked();
             StopMove();
             flyingSaucerAudio.PlayShocked();
             StartCoroutine(cameraEffects.Shake());
+            StartCoroutine(GameControl.Instance.GameControlUI().ThunderFrame());
             yield return new WaitForSeconds(2);
             shocked = false;
         }
@@ -594,6 +582,7 @@ namespace Gamob
         public void SetCameraEffectReference(CameraEffects script)
         {
             cameraEffects = script;
+            camera = cameraEffects.gameObject.GetComponent<Camera>();
         }
 
     }

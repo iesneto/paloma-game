@@ -19,7 +19,8 @@ namespace Gamob
         [SerializeField] private GameObject configWindow;
         [SerializeField] private Toggle music;
         [SerializeField] private Toggle sfx;
-
+        [SerializeField] private Color inTime;
+        [SerializeField] private Color aboveTime;
 
         [System.Serializable]
         private struct WindowClearStage
@@ -30,6 +31,7 @@ namespace Gamob
             public GameObject stageXPValue;
             public TextMeshProUGUI stageXPValueText;
             public GameObject playerTimeLabel;
+            public TextMeshProUGUI playerTimeLabelText;
             public GameObject playerTimeValue;
             public TextMeshProUGUI playerTimeValueText;
             public GameObject extraXPValue;
@@ -55,6 +57,7 @@ namespace Gamob
             // Put Any In-GameUI Here
             public GameObject gameObject;
             public Image cowFillBar;
+            public TextMeshProUGUI stageName;
             public TextMeshProUGUI cowsNumber;
             public TextMeshProUGUI coinsValue;
             public TextMeshProUGUI levelValue;
@@ -83,6 +86,9 @@ namespace Gamob
             public Sprite musicOFF;
             public Sprite sfxON;
             public Sprite sfxOFF;
+            public GameObject thunderFrame;
+            public Image thunderFrameImage;
+            public float thunderFrameAlphaSpeed;
 
         }
         [SerializeField] private InGameUI inGameUI;
@@ -112,8 +118,9 @@ namespace Gamob
 
         public void LoadRandomLevel()
         {
-            GameControl.Instance.StartPlaying();
-            GameControl.Instance.gameObject.GetComponent<SceneController>().LoadRandomLevel();
+            //GameControl.Instance.StartPlaying();
+            //GameControl.Instance.gameObject.GetComponent<SceneController>().LoadRandomLevel();
+            GameControl.Instance.PrepareToLoadStage(-1);
         }
         public void LoadLevel()
         {
@@ -121,7 +128,9 @@ namespace Gamob
             //GameControl.Instance.StartPlaying();
             // StageData stage = GameControl.Instance.StageDatabyIndex(menuUI.mainMenuScript.CurrentStage());
             // GameControl.Instance.gameObject.GetComponent<SceneController>().LoadLevel(stage.id);
-            GameControl.Instance.SetStageToLoadShowInterstitialAds(menuUI.mainMenuScript.CurrentStage());
+
+            //GameControl.Instance.SetStageToLoadShowInterstitialAds(menuUI.mainMenuScript.CurrentStage());
+            GameControl.Instance.PrepareToLoadStage(menuUI.mainMenuScript.CurrentStage());
         }
 
         public void OpenConfigurationWindow()
@@ -262,6 +271,12 @@ namespace Gamob
             inGameUI.play = true;
             ShowWaitPlayerStartUI();
             SetSideBarIcons();
+            InGameUIStageName();
+        }
+
+        void InGameUIStageName()
+        {
+            inGameUI.stageName.SetText(GameControl.Instance.CurrentStage());
         }
 
         public void ShowWaitPlayerStartUI()
@@ -286,7 +301,10 @@ namespace Gamob
             inGameUI.coinsValue.SetText(GameControl.Instance.playerData.currentCoins.ToString());
             inGameUI.cowsNumber.SetText(GameControl.Instance.SceneCurrentCows + "/" + GameControl.Instance.SceneTotalCows);
             StartCoroutine("FillCowsBar");
-            inGameUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString() + "/" + GameControl.Instance.PlayerExperienceToLevelUp().ToString());
+            string nextLevelExperience = GameControl.Instance.PlayerExperienceToLevelUp() != 0 ?
+                "/" + GameControl.Instance.PlayerExperienceToLevelUp().ToString() :
+                "";
+            inGameUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString() + nextLevelExperience);
             inGameUI.levelValue.SetText(GameControl.Instance.playerData.level.ToString());
             inGameUI.experienceFillBar.fillAmount = ((float)(GameControl.Instance.playerData.experience - GameControl.Instance.PlayerStartExperienceOfLevel())
                                                     / (float)(GameControl.Instance.PlayerExperienceToLevelUp() - GameControl.Instance.PlayerStartExperienceOfLevel()));
@@ -309,6 +327,7 @@ namespace Gamob
 
         public void ResetTimers()
         {
+            inGameUI.currentTime.color = inTime;
             inGameUI.bestTime.SetText("00:00");
             inGameUI.currentTime.SetText("00:00");
         }
@@ -400,6 +419,19 @@ namespace Gamob
 
         IEnumerator ShowStageClearedRewards()
         {
+            int playerTime = GameControl.Instance.PlayerMinutes() * 60 + GameControl.Instance.PlayerSeconds();
+            if (playerTime <= ((GameControl.Instance.StageMinutes() * 60) + GameControl.Instance.StageSeconds()))
+            {
+                inGameUI.windowClearStage.playerTimeLabelText.color = inTime;
+                inGameUI.windowClearStage.playerTimeValueText.color = inTime;
+                
+            }
+            else
+            {
+                inGameUI.windowClearStage.playerTimeLabelText.color = aboveTime;
+                inGameUI.windowClearStage.playerTimeValueText.color = aboveTime;                
+            }
+
             inGameUI.windowClearStage.stageTimeLabel.SetActive(true);
             inGameUI.windowClearStage.playerTimeLabel.SetActive(true);
             yield return new WaitForSeconds(0.5f);
@@ -451,6 +483,15 @@ namespace Gamob
 
         public void UpdateCurrentTime(string time)
         {
+            int playerTime = GameControl.Instance.PlayerMinutes() * 60 + GameControl.Instance.PlayerSeconds();
+            if (playerTime <= ((GameControl.Instance.StageMinutes() * 60) + GameControl.Instance.StageSeconds())) 
+            {
+                inGameUI.currentTime.color = inTime;
+            }
+            else 
+            {
+                inGameUI.currentTime.color = aboveTime;
+            }
             inGameUI.currentTime.SetText(time);
             inGameUI.windowClearStage.playerTimeValueText.SetText(time);
         }
@@ -513,7 +554,44 @@ namespace Gamob
         {
             inGameUI.windowClearStage.rewardPopUp.SetActive(false);
         }
+        public IEnumerator ThunderFrame()
+        {            
+            inGameUI.thunderFrame.SetActive(true);
+            Color imageColor = inGameUI.thunderFrameImage.color;
+            float elapsedTime = 0f;
+            float stepSpeed = inGameUI.thunderFrameAlphaSpeed;
+            while(elapsedTime <= 2f)
+            {
+                if(imageColor.a >= 0.5f)
+                {                    
+                    float alphaTarget = Random.Range(0.2f, 0.4f);
+                    for (float i = 1f; i >= alphaTarget; i -=  stepSpeed * Time.deltaTime)
+                    {                        
+                        imageColor.a = i;
+                        inGameUI.thunderFrameImage.color = imageColor;                        
+                        yield return null;
+                        elapsedTime += Time.deltaTime;
+                    }
+                }
+                else
+                {                   
+                    float alphaTarget = Random.Range(0.7f, 0.9f);
+                    for (float i = 0.3f; i <= alphaTarget; i += stepSpeed * Time.deltaTime)
+                    {
+                        imageColor.a = i;
+                        inGameUI.thunderFrameImage.color = imageColor;                        
+                        yield return null;
+                        elapsedTime += Time.deltaTime;
+                    }
+                }
+                
+                
+            }                        
+            imageColor.a = 1f;
+            inGameUI.thunderFrameImage.color = imageColor;
+            inGameUI.thunderFrame.SetActive(false);
 
+        }
 
         #endregion
 
@@ -567,7 +645,10 @@ namespace Gamob
         {
             menuUI.coinsValue.SetText(GameControl.Instance.playerData.currentCoins.ToString());
             menuUI.levelValue.SetText(GameControl.Instance.playerData.level.ToString());
-            menuUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString() + "/" + GameControl.Instance.PlayerExperienceToLevelUp().ToString());
+            string nextLevelExperience = GameControl.Instance.PlayerExperienceToLevelUp() != 0 ?
+                "/" + GameControl.Instance.PlayerExperienceToLevelUp().ToString() :
+                "";
+            menuUI.experienceValue.SetText(GameControl.Instance.playerData.experience.ToString() + nextLevelExperience);
             menuUI.experienceFillBar.fillAmount = ((float)(GameControl.Instance.playerData.experience - GameControl.Instance.PlayerStartExperienceOfLevel())
                                                     / (float)(GameControl.Instance.PlayerExperienceToLevelUp() - GameControl.Instance.PlayerStartExperienceOfLevel()));
             menuUI.flyingSaucerStatSpeed.SetText((1 + GameControl.Instance.playerData.playerSpeed).ToString());
@@ -599,7 +680,7 @@ namespace Gamob
 
         public void NotifyInterstitialAdsLoaded()
         {
-            menuUI.mainMenuScript.EnableStageLoadButton();
+            menuUI.mainMenuScript.InstertitialAdsLoaded();
         }
 
 

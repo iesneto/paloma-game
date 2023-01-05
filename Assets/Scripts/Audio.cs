@@ -6,6 +6,7 @@ namespace Gamob
 {
     public class Audio : MonoBehaviour
     {
+
         [SerializeField] private AudioListener listener;
         [SerializeField] private AudioSource ambientDay;
         [SerializeField] private AudioSource ambientNight;
@@ -25,6 +26,7 @@ namespace Gamob
         [SerializeField] private AudioClip[] stageClips;
         [SerializeField] private AudioSource[] audioSources;
         [SerializeField] private Transform sfxSources;
+        [SerializeField] private bool initialized;
 
         public delegate void AudioEvent();
         public static AudioEvent MuteSFX, UnmuteSFX;
@@ -34,18 +36,28 @@ namespace Gamob
 
         private void Awake()
         {
-            audioSources = sfxSources.GetComponentsInChildren<AudioSource>();
+            Initialize();
         }
+
+        public void Initialize()
+        {
+            if (initialized) return;
+            audioSources = sfxSources.GetComponentsInChildren<AudioSource>();
+            initialized = true;
+        }
+
 
 
 
         public void DisableSFX()
         {
+            
             if (MuteSFX != null) MuteSFX();
             foreach (AudioSource audioSource in audioSources)
             {
                 audioSource.mute = true;
             }
+            
         }
 
         public void DisableMusic()

@@ -41,9 +41,13 @@ namespace Gamob
         private void Awake()
         {
 
-            if (GameControl.Instance != null && !GameControl.Instance.playerData.sfx)
+            if (GameControl.Instance != null)
             {
-                MuteSFX();
+                if (!GameControl.Instance.playerData.sfx)
+                {
+                    MuteSFX();
+                }
+                GameControl.Instance.SetTutorialCloud();
             }
             
             startPoint = transform.position;

@@ -15,9 +15,10 @@ MonoBehaviour:
   id: 5
   nameID: 06
   buildID: 7
-  xp: 180
-  rewardCoins: 160
-  time: 120
+  xp: 300
+  rewardCoins: 220
+  time: 65
   levelToUnlock: 5
   value: 350
   image: {fileID: 21300000, guid: c1a53ce1f3908f74686da49ef7f76e1f, type: 3}
+  shift: 0
