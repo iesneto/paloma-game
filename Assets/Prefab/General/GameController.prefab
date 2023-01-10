@@ -19186,7 +19186,8 @@ MonoBehaviour:
   m_text: Carregando
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1bdbbd43a253d47f99f853e49dce8edc, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: -6360588970910393389, guid: 1bdbbd43a253d47f99f853e49dce8edc,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -19569,7 +19570,7 @@ MonoBehaviour:
   _iOsAdUnitInterstitialId: Interstitial_iOS
   _androidAdUnitRewardedId: Rewarded_Android
   _iOsAdUnitRewardedId: Rewarded_iOS
-  _testMode: 0
+  _testMode: 1
   _adUnitInterstitialId: 
   _adUnitRewardedId: 
   isReady: 0
@@ -19819,7 +19820,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -20163,7 +20164,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3346436385131104652
 RectTransform:
   m_ObjectHideFlags: 0

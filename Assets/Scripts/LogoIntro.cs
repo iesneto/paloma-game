@@ -10,9 +10,11 @@ namespace Gamob
     {
         [SerializeField] private Image logo;
         [SerializeField] private float fadeSpeed;
+        [SerializeField] private Slider loadBar;
 
         private void Awake()
         {
+            loadBar.value = 0f;
             Color c = logo.color;
             c.a = 0;
             logo.color = c;
@@ -28,7 +30,46 @@ namespace Gamob
                 logo.color = c;
                 yield return null;
             }
-            SceneManager.LoadScene(1);
+            //SceneManager.LoadScene(1);
+            StartCoroutine(LoadSceneAsync());
+        }
+
+        IEnumerator LoadSceneAsync()
+        {
+            
+            loadBar.gameObject.SetActive(true);
+            yield return null;
+            //if (isLoading) yield break;
+            //isLoading = true;
+            AsyncOperation operation = SceneManager.LoadSceneAsync(1);
+            //uiManager.SetLoadingScreen(true);
+
+
+            while (!operation.isDone)
+            {
+                //float progress = Mathf.Clamp01(operation.progress);
+                //uiManager.SetLoadingBarValue(operation.progress);
+                loadBar.value = operation.progress;
+                yield return null;
+            }
+
+            loadBar.value = 1f;
+            yield return null;
+            //uiManager.SetLoadingBarValue(1);
+            //StartCoroutine(FadeOutLoadingScreen());
+
+            //if (scene != mainMenuSceneBuildIndex)
+            //{
+            //    InitializeScene();
+            //    GameControl.Instance.LevelLoaded();
+            //    StartCoroutine(FadeOutLoadingScreen(false));
+            //}
+            //else
+            //{
+            //    GameControl.Instance.StartMainMenu();
+            //    StartCoroutine(FadeOutLoadingScreen(true));
+            //}
+            //isLoading = false;
         }
     }
 }

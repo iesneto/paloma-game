@@ -7,7 +7,7 @@ using TMPro;
 
 namespace Gamob
 {
-    public class StageMenuItem : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler
+    public class StageMenuItem : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler //,IPointerUpHandler
     {
 
         public int Id { get; set; }
@@ -51,6 +51,13 @@ namespace Gamob
             down = true;
             StartCoroutine("ScaleDown");
         }
+
+        //public void OnPointerUp(PointerEventData eventData)
+        //{
+
+        //    up = true;
+        //    StartCoroutine("ScaleUp");
+        //}
 
         public void OnPointerClick(PointerEventData eventData)
         {

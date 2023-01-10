@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "RX8M70CA6CP",
         "name": "br.com.gamob.cowsandufos",
-        "processId": 12061,
+        "processId": 26572,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -11,37 +11,49 @@
         {
             "deviceId": "RX8M70CA6CP",
             "name": "br.com.gamob.cowsandufos",
-            "processId": 6057,
-            "exited": true
-        },
-        {
-            "deviceId": "RX8M70CA6CP",
-            "name": "br.com.gamob.cowsandufos",
-            "processId": 11601,
-            "exited": true
-        },
-        {
-            "deviceId": "RX8M70CA6CP",
-            "name": "com.sec.android.app.launcher",
-            "processId": 5316,
-            "exited": false
-        },
-        {
-            "deviceId": "RX8M70CA6CP",
-            "name": "br.com.gamob.cowsandufos",
-            "processId": 13708,
-            "exited": false
-        },
-        {
-            "deviceId": "RX8M70CA6CP",
-            "name": "br.com.gamob.cowsandufos",
             "processId": 15485,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "RX8M70CA6CP",
             "name": "br.com.gamob.cowsandufos",
             "processId": 12061,
+            "exited": true
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 19891,
+            "exited": true
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 437,
+            "exited": true
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 5007,
+            "exited": true
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "com.sec.android.app.launcher",
+            "processId": 4787,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 22760,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 26572,
             "exited": false
         }
     ],

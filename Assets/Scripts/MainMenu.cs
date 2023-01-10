@@ -577,7 +577,7 @@ namespace Gamob
             windowStage.itemPriceMask.SetActive(true);
             windowStage.playButton.SetActive(false);
             windowStage.stageImage.sprite = _stage.image;
-            windowStage.stageName.SetText("Estágio " + _stage.nameID);
+            windowStage.stageName.SetText("Cenário " + _stage.nameID);
             windowStage.xpText.SetText(_stage.xp.ToString());
 
             if (!GameControl.Instance.IsStageUnlocked(_stage.id))
