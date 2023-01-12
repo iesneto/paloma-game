@@ -29382,7 +29382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d0dc7029540e054293a4f06a09da1d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posY: 6
+  posY: 6.2
   worldY: 0
   rayLength: 100
   levelingSpeed: 0.005

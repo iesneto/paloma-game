@@ -18,7 +18,7 @@ namespace Gamob
         //[SerializeField] private GameObject[] PlayMenuPanel_CowCounter;
         [SerializeField] private TextMeshProUGUI PlayMenuPanel_Coins;
         [SerializeField] private Button PlayMenuPanel_PlayButton;
-        [SerializeField] private GameObject adsIconRandomPlayButton;
+        //[SerializeField] private GameObject adsIconRandomPlayButton;
         [SerializeField] private GameObject modalConfirmPurchase;
         [SerializeField] private Image modalIcon;
         [SerializeField] private Image modalLevelIcon;
@@ -122,6 +122,7 @@ namespace Gamob
             public GameObject playButton;
             public GameObject adsImage;
             public TextMeshProUGUI xpText;
+            public GameObject adsIconOnPlayButton;
         }
         [SerializeField] private WindowStage windowStage;
 
@@ -160,7 +161,7 @@ namespace Gamob
         public void ShowPlayMenu()
         {
             CloseModal();
-            AdsIconOnPlayRandom();
+            //AdsIconOnPlayRandom();
             IntroPanel.SetActive(false);
             PlayMenuPanel.SetActive(true);
             windowFlyingSaucer.window.SetActive(false);
@@ -601,7 +602,8 @@ namespace Gamob
                 {
                     windowStage.playButton.SetActive(true);
                     //windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<AdsManager>().interstitialLoaded);
-                    windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<Advertisements>().interstitialLoaded);
+                    //windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<Advertisements>().interstitialLoaded);
+                    AdsIconOnStagePlay();
                 }
             }
         }
@@ -641,7 +643,8 @@ namespace Gamob
             windowStage.popDownPrice.GetComponent<Animation>().Stop();
             windowStage.playButton.SetActive(true);
             //windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<AdsManager>().interstitialLoaded);
-            windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<Advertisements>().interstitialLoaded);
+            //windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<Advertisements>().interstitialLoaded);
+            AdsIconOnStagePlay();
             windowStage.playButton.GetComponent<Animation>().Rewind();
             windowStage.playButton.GetComponent<Animation>().Play();
         }
@@ -662,19 +665,26 @@ namespace Gamob
         public void InstertitialAdsLoaded()
         {
             EnableStageLoadButton();
-            AdsIconOnPlayRandom();
+            //AdsIconOnPlayRandom();
+            AdsIconOnStagePlay();
         }
 
-        public void AdsIconOnPlayRandom()
+        void AdsIconOnStagePlay()
         {
-            if (GameControl.Instance.CanShowAdsIcon()) ShowAdsIconOnRandomPlay();
-            else HideAdsIconOnRandomPlay();
+            if (GameControl.Instance.CanShowAdsIcon()) ShowAdsIconOnPlayStage();
+            else HideAdsIconOnPlayStage();
         }
+
+        //public void AdsIconOnPlayRandom()
+        //{
+        //    if (GameControl.Instance.CanShowAdsIcon()) ShowAdsIconOnRandomPlay();
+        //    else HideAdsIconOnRandomPlay();
+        //}
 
         void EnableStageLoadButton()
         {
             //windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<AdsManager>().interstitialLoaded);
-            windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<Advertisements>().interstitialLoaded);
+            //windowStage.playButton.GetComponent<InteractableInterface>().SetInteractable(GameControl.Instance.gameObject.GetComponent<Advertisements>().interstitialLoaded);
         }
 
         public void CloseLevelUpWindow()
@@ -774,14 +784,26 @@ namespace Gamob
 
         }
 
-        void ShowAdsIconOnRandomPlay()
+        //void ShowAdsIconOnRandomPlay()
+        //{
+        //    adsIconRandomPlayButton.SetActive(true);
+        //}
+
+        //void HideAdsIconOnRandomPlay()
+        //{
+        //    adsIconRandomPlayButton.SetActive(false);
+        //}
+
+        void ShowAdsIconOnPlayStage()
         {
-            adsIconRandomPlayButton.SetActive(true);
+            //adsIconRandomPlayButton.SetActive(true);
+            windowStage.adsIconOnPlayButton.SetActive(true);
         }
 
-        void HideAdsIconOnRandomPlay()
+        void HideAdsIconOnPlayStage()
         {
-            adsIconRandomPlayButton.SetActive(false);
+            //adsIconRandomPlayButton.SetActive(false);
+            windowStage.adsIconOnPlayButton.SetActive(false);
         }
 
         //public void TestLevelUpWindow()

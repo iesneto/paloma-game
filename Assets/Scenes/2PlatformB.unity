@@ -2057,19 +2057,6 @@ Transform:
   m_Father: {fileID: 871752581}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 170.422, z: 0}
---- !u!65 &505332269032678937
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847280175286655819}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 16.439999, y: 6.6333365, z: 17.422398}
-  m_Center: {x: 0.3464818, y: -0.4, z: 0.0849185}
 --- !u!4 &517606826734406853
 Transform:
   m_ObjectHideFlags: 0
@@ -3805,7 +3792,7 @@ GameObject:
   - component: {fileID: 38830868235633137}
   - component: {fileID: 3973916417455967828}
   - component: {fileID: 1207765851787147934}
-  - component: {fileID: 505332269032678937}
+  - component: {fileID: 847280175286655820}
   m_Layer: 16
   m_Name: Platform03
   m_TagString: Floor
@@ -3813,6 +3800,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!64 &847280175286655820
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847280175286655819}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6986726198952830130, guid: 166599d608e2c3c49b406047af7b37fe, type: 3}
 --- !u!1 &854331953415116245
 GameObject:
   m_ObjectHideFlags: 0
@@ -41860,19 +41861,6 @@ Transform:
   m_Father: {fileID: 3333269010945163337}
   m_RootOrder: 47
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &9006849534527490072
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9006849534527490075}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 8.280947, y: 3.8, z: 17.322285}
-  m_Center: {x: 0.16756415, y: 0.16, z: -0.122154236}
 --- !u!1 &9006849534527490075
 GameObject:
   m_ObjectHideFlags: 0
@@ -41884,7 +41872,7 @@ GameObject:
   - component: {fileID: 8625819640495805089}
   - component: {fileID: 4619227395647872260}
   - component: {fileID: 7493494580353493454}
-  - component: {fileID: 9006849534527490072}
+  - component: {fileID: 9006849534527490076}
   m_Layer: 16
   m_Name: Passage01
   m_TagString: Floor
@@ -41892,6 +41880,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!64 &9006849534527490076
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9006849534527490075}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4068373912626513877, guid: ffb7de7162a78e44d83e96b709adab66, type: 3}
 --- !u!23 &9010152550333495579
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Advertisements;
+using UnityEngine.Networking;
 
 namespace Gamob
 {
@@ -21,11 +22,31 @@ namespace Gamob
     public bool interstitialLoaded = false;
     public bool rewardedLoaded = false;
 
-    void Start() => InitializeAds();
+        //void Start() => InitializeAds();
+        void Start() => StartCoroutine(CheckInternetConnection());
+
+        IEnumerator CheckInternetConnection()
+        {
+            while(!isReady)
+            {                
+                UnityWebRequest www = new UnityWebRequest("http://google.com");
+                UnityWebRequestAsyncOperation request = www.SendWebRequest();              
+                while (!www.isDone)
+                {                    
+                    yield return null;
+                }
+                if (www.result == UnityWebRequest.Result.Success)
+                {
+                    InitializeAds();
+                    //break;
+                }
+                
+                yield return new WaitForSeconds(60);
+            }
+        }
 
         public void InitializeAds()
         {
-
             _gameId = (Application.platform == RuntimePlatform.IPhonePlayer)
             ? _iOSGameId
             : _androidGameId;
@@ -80,12 +101,15 @@ namespace Gamob
 
         public void OnInitializationFailed(UnityAdsInitializationError error, string message)
         {
-            // Debug.Log($"Unity Ads Initialization Failed: {error.ToString()} - {message}");
+            //Debug.Log($"Unity Ads Initialization Failed: {error.ToString()} - {message}");
+            //StartCoroutine(RetryInitialization());
         }
+
+        
 
         public void OnUnityAdsAdLoaded(string placementId)
         {
-
+            
             if (placementId.Equals(_adUnitInterstitialId))
             {
                 interstitialLoaded = true;
@@ -102,7 +126,7 @@ namespace Gamob
 
         public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
         {
-
+            
             if (placementId.Equals(_adUnitInterstitialId))
             {
                 interstitialLoaded = false;

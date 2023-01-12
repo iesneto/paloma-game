@@ -15176,7 +15176,7 @@ GameObject:
   - component: {fileID: 2299720654926648888}
   - component: {fileID: 2901976588793354653}
   - component: {fileID: 1126202396617731415}
-  - component: {fileID: 1756552001807020510}
+  - component: {fileID: 1486732602721717379}
   m_Layer: 16
   m_Name: Platform02
   m_TagString: Floor
@@ -15184,6 +15184,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!64 &1486732602721717379
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486732602721717378}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5258981672929327740, guid: 21223340b2ef0ba499273538f97a71b1, type: 3}
 --- !u!33 &1497732855116750421
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -16311,19 +16325,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1740372796745773890}
   m_Mesh: {fileID: 4300000, guid: 6d24cb50df8cc924c98750d0b3b0a50c, type: 3}
---- !u!65 &1756552001807020510
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1486732602721717378}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 11.779318, y: 3.921352, z: 16.005798}
-  m_Center: {x: 0.4735725, y: 0.035, z: 0.27639866}
 --- !u!4 &1756552002053282554
 Transform:
   m_ObjectHideFlags: 0
@@ -61711,19 +61712,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7129998064196244964}
   m_Mesh: {fileID: 4300000, guid: ef2564dc762f86043b5e2e1396033d03, type: 3}
---- !u!65 &4815681987902927329
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5626637028775840951}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 17.811571, y: 5.973526, z: 18.103792}
-  m_Center: {x: -2.5443265, y: 0.02, z: 2.425975}
 --- !u!1 &4815681988425485682
 GameObject:
   m_ObjectHideFlags: 0
@@ -66678,7 +66666,7 @@ GameObject:
   - component: {fileID: 4998437299127457293}
   - component: {fileID: 8282647105990891944}
   - component: {fileID: 6130851415415975266}
-  - component: {fileID: 4815681987902927329}
+  - component: {fileID: 5626637028775840952}
   m_Layer: 16
   m_Name: Platform04
   m_TagString: Floor
@@ -66686,6 +66674,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!64 &5626637028775840952
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5626637028775840951}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4673368754417492098, guid: 3ffd186847b9eab45be27789934abd7d, type: 3}
 --- !u!33 &5633799343297633202
 MeshFilter:
   m_ObjectHideFlags: 0

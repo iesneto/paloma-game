@@ -33,8 +33,8 @@ namespace Gamob
         [SerializeField] private List<CowData> cows;
         [SerializeField] private List<StageData> stages;
         [SerializeField] private int currentStage;
-        [SerializeField] private int randomPlayCounter;
-        [SerializeField] private int randomPlayMaxWithoutAds;
+        [SerializeField] private int selectPlayCounter;
+        [SerializeField] private int selectPlayMaxWithoutAds;
         [SerializeField] private bool randomPlay;
         [SerializeField] private float amortizationFactor;
         private bool dropped;
@@ -198,6 +198,7 @@ namespace Gamob
 
         public void StartMainMenu()
         {
+
             if (startedPlaying)
             {
                 uiManager.LoadMainMenuPlay();
@@ -735,7 +736,7 @@ namespace Gamob
 
         public bool CanShowAdsIcon()
         {
-            if (randomPlayCounter >= randomPlayMaxWithoutAds - 1 && _adsManager.interstitialLoaded) return true;
+            if (selectPlayCounter >= selectPlayMaxWithoutAds - 1 && _adsManager.interstitialLoaded) return true;
 
             return false;
         }
@@ -745,21 +746,35 @@ namespace Gamob
             if (stageNumber < 0)
             {
                 randomPlay = true;
-                randomPlayCounter++;
-                if(randomPlayCounter >= randomPlayMaxWithoutAds && _adsManager.interstitialLoaded)
-                {
-                    randomPlayCounter = 0;
-                    _adsManager.ShowInterstitialAd();
-                }
-                else
-                {
-                    LoadStage();
-                }
+                LoadStage();
+                
+                //randomPlayCounter++;
+                //if(randomPlayCounter >= randomPlayMaxWithoutAds && _adsManager.interstitialLoaded)
+                //{
+                //    randomPlayCounter = 0;
+                //    _adsManager.ShowInterstitialAd();
+                //}
+                //else
+                //{
+                //    LoadStage();
+                //}
             }
             else
             {
-                randomPlayCounter = 0;
-                SetStageToLoadShowInterstitialAds(stageNumber);
+                selectPlayCounter++;
+                if(selectPlayCounter >= selectPlayMaxWithoutAds && _adsManager.interstitialLoaded)
+                {
+                    selectPlayCounter = 0;
+                    SetStageToLoadShowInterstitialAds(stageNumber);
+                }
+                else
+                {
+                    SetStage(stageNumber);
+                    LoadStage();
+                }
+
+
+
             }
         }
 

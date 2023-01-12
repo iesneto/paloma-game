@@ -38,6 +38,7 @@ namespace Gamob
         {
             
             loadBar.gameObject.SetActive(true);
+            Debug.Log("Inicio: " + loadBar.value);
             yield return null;
             //if (isLoading) yield break;
             //isLoading = true;
@@ -49,12 +50,15 @@ namespace Gamob
             {
                 //float progress = Mathf.Clamp01(operation.progress);
                 //uiManager.SetLoadingBarValue(operation.progress);
+
                 loadBar.value = operation.progress;
+                Debug.Log("Progress: " + loadBar.value);
                 yield return null;
             }
 
-            loadBar.value = 1f;
+            loadBar.value = 1f;            
             yield return null;
+            
             //uiManager.SetLoadingBarValue(1);
             //StartCoroutine(FadeOutLoadingScreen());
 
