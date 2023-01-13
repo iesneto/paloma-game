@@ -92,7 +92,7 @@ namespace Gamob
                 yield return null;
             }
 
-            if (up) SelectItem();
+            //if (up) SelectItem();
 
             up = exit = false;
         }
@@ -148,6 +148,11 @@ namespace Gamob
         public CowData ItemCowData()
         {
             return cow;
+        }
+
+        public void Clicked()
+        {
+            SelectItem();
         }
     }
 }

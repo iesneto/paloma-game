@@ -25,6 +25,7 @@ namespace Gamob
         [System.Serializable]
         private struct WindowClearStage
         {
+            public TextMeshProUGUI titleCondition;
             public GameObject stageTimeLabel;
             public GameObject stageTimeValue;
             public TextMeshProUGUI stageTimeValueText;
@@ -89,6 +90,9 @@ namespace Gamob
             public GameObject thunderFrame;
             public Image thunderFrameImage;
             public float thunderFrameAlphaSpeed;
+            public GameObject warningIcon;
+            public bool warningIconPlay;
+            public float warningIconAlphaSpeed;
 
         }
         [SerializeField] private InGameUI inGameUI;
@@ -203,6 +207,54 @@ namespace Gamob
 
         #region IN_GAME_UI_METHODS
 
+        public void EnableWarningIcon()
+        {
+            inGameUI.warningIconPlay = true;
+            StartCoroutine(WarningIcon());
+        }
+
+        public void DisableWarningIcon()
+        {
+            inGameUI.warningIconPlay = false;            
+        }
+
+        void WarningIconAlpha(float alpha)
+        {
+            Color iconColor = inGameUI.warningIcon.GetComponent<Image>().color;
+            iconColor.a = alpha;
+            inGameUI.warningIcon.GetComponent<Image>().color = iconColor;
+        }
+
+        public IEnumerator WarningIcon()
+        {
+            inGameUI.warningIcon.SetActive(true);
+            float alpha = 1f;
+            while(inGameUI.warningIconPlay)
+            {
+                if(alpha >= 0.9f)
+                {
+                    for (alpha = 1f; alpha >= 0.1f; alpha -= inGameUI.warningIconAlphaSpeed)
+                    {
+                        WarningIconAlpha(alpha);
+                        yield return null;
+                    }
+                }
+                else
+                {
+                    for (alpha = 0.1f; alpha <= 0.9f; alpha += inGameUI.warningIconAlphaSpeed)
+                    {
+                        WarningIconAlpha(alpha);
+                        yield return null;
+                    }
+                }
+                
+            }
+
+            inGameUI.warningIcon.SetActive(false);
+
+        }
+
+
         void SetSideBarIcons()
         {
             inGameUI.musicIcon.sprite = GameControl.Instance.playerData.music ?
@@ -269,7 +321,8 @@ namespace Gamob
             InGameUIShow(true);
             MainMenuShowUI(false);
             inGameUI.play = true;
-            ShowWaitPlayerStartUI();
+            inGameUI.warningIcon.SetActive(false);
+            //ShowWaitPlayerStartUI();
             SetSideBarIcons();
             InGameUIStageName();
         }
@@ -369,7 +422,15 @@ namespace Gamob
             inGameUI.currentOpenedWindow = inGameUI.stageCleared;
             inGameUI.stageCleared.GetComponentInChildren<Animator>().SetBool("Open", true);
             StartCoroutine("ShowStageClearedRewards");
-            GameControl.Instance.AudioManager().StageClear();
+            if (GameControl.Instance.StageVictory)
+            {
+                GameControl.Instance.AudioManager().StageClearVictory();
+            }
+            else
+            {
+                GameControl.Instance.AudioManager().StageClearDefeat();
+            }
+            
             GameControl.Instance.PlayerAudio().StageMuteFlyingSaucer();
         }
 
@@ -419,17 +480,23 @@ namespace Gamob
 
         IEnumerator ShowStageClearedRewards()
         {
-            int playerTime = GameControl.Instance.PlayerMinutes() * 60 + GameControl.Instance.PlayerSeconds();
-            if (playerTime <= ((GameControl.Instance.StageMinutes() * 60) + GameControl.Instance.StageSeconds()))
+            //int playerTime = GameControl.Instance.PlayerMinutes() * 60 + GameControl.Instance.PlayerSeconds();
+            //if (playerTime <= ((GameControl.Instance.StageMinutes() * 60) + GameControl.Instance.StageSeconds()))
+            bool victory = GameControl.Instance.StageVictory;
+            if (victory)
             {
                 inGameUI.windowClearStage.playerTimeLabelText.color = inTime;
                 inGameUI.windowClearStage.playerTimeValueText.color = inTime;
+                inGameUI.windowClearStage.titleCondition.SetText("Vitória");
+                inGameUI.windowClearStage.titleCondition.color = inTime;
                 
             }
             else
             {
                 inGameUI.windowClearStage.playerTimeLabelText.color = aboveTime;
-                inGameUI.windowClearStage.playerTimeValueText.color = aboveTime;                
+                inGameUI.windowClearStage.playerTimeValueText.color = aboveTime;
+                inGameUI.windowClearStage.titleCondition.SetText("Derrota");
+                inGameUI.windowClearStage.titleCondition.color = aboveTime;
             }
 
             inGameUI.windowClearStage.stageTimeLabel.SetActive(true);
@@ -447,7 +514,7 @@ namespace Gamob
             inGameUI.windowClearStage.stageXPValueText.SetText("XP " + GameControl.Instance.StageXP().ToString());
 
             //if (gameObject.GetComponent<AdsManager>().rewardedLoaded)
-            if (gameObject.GetComponent<Advertisements>().rewardedLoaded)
+            if (gameObject.GetComponent<Advertisements>().rewardedLoaded && victory)
             {
                 inGameUI.windowClearStage.rewardedAdsButton.SetActive(true);
                 inGameUI.windowClearStage.rewardedAdsButtonXPText.SetText(GameControl.Instance.StageTotalXP().ToString());
@@ -483,14 +550,26 @@ namespace Gamob
 
         public void UpdateCurrentTime(string time)
         {
+            int stageTime = (GameControl.Instance.StageMinutes() * 60) + GameControl.Instance.StageSeconds();
             int playerTime = GameControl.Instance.PlayerMinutes() * 60 + GameControl.Instance.PlayerSeconds();
-            if (playerTime <= ((GameControl.Instance.StageMinutes() * 60) + GameControl.Instance.StageSeconds())) 
+            bool warningTime = (stageTime - playerTime <= 5) && (stageTime - playerTime >= 0) ? true : false;
+
+            if(warningTime && !inGameUI.warningIconPlay)
+            {
+                EnableWarningIcon();
+                GameControl.Instance.AudioManager().WarningPlay();
+            }
+            
+            if (playerTime <= stageTime) 
             {
                 inGameUI.currentTime.color = inTime;
             }
             else 
             {
                 inGameUI.currentTime.color = aboveTime;
+                DisableWarningIcon();
+                GameControl.Instance.AudioManager().WarningStop();
+
             }
             inGameUI.currentTime.SetText(time);
             inGameUI.windowClearStage.playerTimeValueText.SetText(time);

@@ -40,11 +40,12 @@ namespace Gamob
         {
             if (!GameControl.Instance.playerData.tutorials[0])
             {
+                GameControl.Instance.GameControlUI().ClosePlayerStartedUI();
                 this.gameObject.SetActive(true);
                 controllers.SetActive(true);
                 //skipButton.SetActive(true);
                 GameControl.Instance.PauseGame();
-                GameControl.Instance.GameControlUI().ClosePlayerStartedUI();
+                
             }
             if (tutorial02Permission) 
             {

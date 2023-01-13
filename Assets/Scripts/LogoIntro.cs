@@ -10,11 +10,13 @@ namespace Gamob
     {
         [SerializeField] private Image logo;
         [SerializeField] private float fadeSpeed;
-        [SerializeField] private Slider loadBar;
+        [SerializeField] private GameObject loadingIcon;
+        //[SerializeField] private Slider loadBar;
 
         private void Awake()
         {
-            loadBar.value = 0f;
+            // loadBar.value = 0f;
+            loadingIcon.SetActive(false);
             Color c = logo.color;
             c.a = 0;
             logo.color = c;
@@ -31,49 +33,11 @@ namespace Gamob
                 yield return null;
             }
             //SceneManager.LoadScene(1);
-            StartCoroutine(LoadSceneAsync());
-        }
+            loadingIcon.SetActive(true);
 
-        IEnumerator LoadSceneAsync()
-        {
+            SceneManager.LoadSceneAsync(1);
             
-            loadBar.gameObject.SetActive(true);
-            Debug.Log("Inicio: " + loadBar.value);
-            yield return null;
-            //if (isLoading) yield break;
-            //isLoading = true;
-            AsyncOperation operation = SceneManager.LoadSceneAsync(1);
-            //uiManager.SetLoadingScreen(true);
-
-
-            while (!operation.isDone)
-            {
-                //float progress = Mathf.Clamp01(operation.progress);
-                //uiManager.SetLoadingBarValue(operation.progress);
-
-                loadBar.value = operation.progress;
-                Debug.Log("Progress: " + loadBar.value);
-                yield return null;
-            }
-
-            loadBar.value = 1f;            
-            yield return null;
-            
-            //uiManager.SetLoadingBarValue(1);
-            //StartCoroutine(FadeOutLoadingScreen());
-
-            //if (scene != mainMenuSceneBuildIndex)
-            //{
-            //    InitializeScene();
-            //    GameControl.Instance.LevelLoaded();
-            //    StartCoroutine(FadeOutLoadingScreen(false));
-            //}
-            //else
-            //{
-            //    GameControl.Instance.StartMainMenu();
-            //    StartCoroutine(FadeOutLoadingScreen(true));
-            //}
-            //isLoading = false;
         }
+        
     }
 }

@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "RX8M70CA6CP",
         "name": "br.com.gamob.cowsandufos",
-        "processId": 26572,
+        "processId": 662,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -54,6 +54,42 @@
             "deviceId": "RX8M70CA6CP",
             "name": "br.com.gamob.cowsandufos",
             "processId": 26572,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 28034,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 1252,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 3337,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 10702,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 25136,
+            "exited": false
+        },
+        {
+            "deviceId": "RX8M70CA6CP",
+            "name": "br.com.gamob.cowsandufos",
+            "processId": 662,
             "exited": false
         }
     ],

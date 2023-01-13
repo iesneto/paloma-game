@@ -38,6 +38,7 @@ namespace Gamob
         [SerializeField] private bool randomPlay;
         [SerializeField] private float amortizationFactor;
         private bool dropped;
+        public bool StageVictory { get; set; }
 
         //[SerializeField] private List<int> availableFlyingSaucersIds;
 
@@ -236,7 +237,9 @@ namespace Gamob
             if (stagePlaying)
             {
                 playerStartedMoving = false;
-                tutorial.WakeUp();                
+                uiManager.ShowWaitPlayerStartUI();
+                tutorial.WakeUp();
+                
                 StartCoroutine("StartLevel");
             }
         }
@@ -466,11 +469,13 @@ namespace Gamob
             {
                 playerData.timesStageClearInTime++;
                 stageExtraXP = stageXP / 2;
+                StageVictory = true;
             }
             else
             {
                 playerData.timesStageClearOutTime++;
                 stageExtraXP = 0;
+                StageVictory = false;
             }
 
             stageTotalXP = stageXP + stageExtraXP;
@@ -480,6 +485,8 @@ namespace Gamob
             AddExperience(stageTotalXP);
             uiManager.InGameUISync();
             uiManager.OpenStageCleared();
+            uiManager.DisableWarningIcon();
+            audioManager.WarningStop();
             player.GetComponent<PlayerBehavior>().Lock();
         }
 

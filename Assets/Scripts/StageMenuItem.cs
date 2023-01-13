@@ -98,7 +98,7 @@ namespace Gamob
                 yield return null;
             }
 
-            if (up) SelectItem();
+            //if (up) SelectItem();
 
             up = exit = false;
         }
@@ -146,6 +146,11 @@ namespace Gamob
         public StageData ItemStageData()
         {
             return stage;
+        }
+
+        public void Clicked()
+        {
+            SelectItem();
         }
     }
 }

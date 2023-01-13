@@ -20,7 +20,9 @@ namespace Gamob
         [SerializeField] private AudioSource pressButton;
         [SerializeField] private AudioSource pauseGame;
         [SerializeField] private AudioSource resumeGame;
-        [SerializeField] private AudioSource stageClear;
+        [SerializeField] private AudioSource stageClearVictory;
+        [SerializeField] private AudioSource stageClearDefeat;
+        [SerializeField] private AudioSource warning;
         [SerializeField] private AudioClip titleScreenClip;
         [SerializeField] private AudioClip dockStationClip;
         [SerializeField] private AudioClip[] stageClips;
@@ -165,9 +167,20 @@ namespace Gamob
         {
             resumeGame.Play();
         }
-        public void StageClear()
+        public void StageClearVictory()
         {
-            stageClear.Play();
+            stageClearVictory.Play();
+            OnStageClearSounds();
+        }
+
+        public void StageClearDefeat()
+        {
+            stageClearDefeat.Play();
+            OnStageClearSounds();
+        }
+
+        void OnStageClearSounds()
+        {
             music.volume = 0f;
             ambientDay.volume = 0f;
             ambientNight.volume = 0f;
@@ -206,6 +219,16 @@ namespace Gamob
         {
             ambientNight.Stop();
 
+        }
+
+        public void WarningPlay()
+        {
+            warning.Play();
+        }
+
+        public void WarningStop()
+        {
+            warning.Stop();
         }
     }
 }
