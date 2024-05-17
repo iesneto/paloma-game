@@ -38,7 +38,7 @@ namespace Gamob
 
         private void Awake()
         {
-            Initialize();
+            Initialize();            
         }
 
         public void Initialize()
@@ -107,7 +107,7 @@ namespace Gamob
             DisableAudioListener();
             if (stageClips.Length > 0)
             {
-                int musicIndex = Random.Range(1, stageClips.Length);
+                int musicIndex = Random.Range(0, stageClips.Length);
                 music.clip = stageClips[musicIndex];
                 music.Play();
             }
